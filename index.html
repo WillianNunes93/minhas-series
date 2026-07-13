@@ -74,11 +74,17 @@
                   <span id="preview-cancelada" class="badge cancelada" hidden>Cancelada</span>
                   <span id="preview-nota-tmdb" class="badge nota-tmdb" hidden></span>
                   <span id="preview-temporadas" class="serie-meta" hidden></span>
+                  <a id="preview-trailer" class="link-trailer" target="_blank" rel="noopener" hidden>▶ Trailer</a>
                 </div>
                 <div id="preview-generos" class="generos-tags"></div>
               </div>
             </div>
             <p id="preview-sinopse" class="detalhe-sinopse"></p>
+
+            <div id="preview-recomendacoes-secao" class="recomendacoes-secao" hidden>
+              <p class="recomendacoes-titulo">Você também pode gostar de</p>
+              <div id="preview-recomendacoes" class="recomendacoes-grid"></div>
+            </div>
           </div>
 
           <div class="campo">
@@ -126,9 +132,22 @@
       <section class="lista-section painel-tab" id="painel-lista">
         <div class="lista-header">
           <h2>Minha lista</h2>
-          <select id="filtro-distribuidora">
-            <option value="todas">Todas as distribuidoras</option>
-          </select>
+          <div class="lista-controles">
+            <input type="text" id="busca-lista" placeholder="Buscar na sua lista...">
+            <select id="ordenar-lista">
+              <option value="recentes">Recentes primeiro</option>
+              <option value="nota">Maior nota</option>
+              <option value="alfabetica">Alfabética (A-Z)</option>
+            </select>
+            <select id="filtro-distribuidora">
+              <option value="todas">Todas as distribuidoras</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="continuar-assistindo-secao" class="continuar-secao" hidden>
+          <p class="continuar-titulo">▶️ Continuar assistindo</p>
+          <div id="continuar-assistindo-grid" class="serie-grid"></div>
         </div>
 
         <div id="lista-series"></div>
