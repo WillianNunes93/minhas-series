@@ -9,3 +9,7 @@ const firebaseConfig = {
   messagingSenderId: "217886351555",
   appId: "1:217886351555:web:810243e60f0ee2b9614276",
 };
+
+// E-mail com acesso ao painel de administrador (admin.html).
+// Precisa ser idêntico ao usado nas regras de segurança do Firestore.
+const ADMIN_EMAIL = "willianabnuness@gmail.com";
