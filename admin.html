@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin — Minhas Séries</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1><span class="emoji">🛠️</span> Painel Admin</h1>
+    <p>Minhas Séries — área restrita</p>
+  </header>
+
+  <div id="tela-carregando" class="auth-wrap">
+    <div class="auth-card">
+      <p class="vazio">Verificando acesso...</p>
+    </div>
+  </div>
+
+  <div id="tela-negado" class="auth-wrap" hidden>
+    <div class="auth-card">
+      <h2>Acesso negado</h2>
+      <p class="vazio">Essa área é restrita ao administrador.</p>
+      <a href="index.html"><button type="button">Voltar para o app</button></a>
+    </div>
+  </div>
+
+  <div id="admin-container" hidden>
+    <div class="usuario-barra">
+      <span id="usuario-email"></span>
+      <a href="index.html">Voltar para o app</a>
+      <button type="button" id="btn-sair">Sair</button>
+    </div>
+
+    <main class="main-admin">
+      <section class="lista-section">
+        <h2>Estatísticas gerais</h2>
+        <div class="stats-grid" id="stats-grid"></div>
+      </section>
+
+      <section class="lista-section">
+        <h2>Usuários cadastrados</h2>
+        <div id="tabela-usuarios"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

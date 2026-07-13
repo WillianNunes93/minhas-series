@@ -23,11 +23,34 @@ function mostrarErroAuth(erro) {
   authErroEl.hidden = false;
 }
 
-auth.onAuthStateChanged((usuario) => {
+async function garantirPerfilUsuario(usuario) {
+  const perfilRef = db.collection("usuarios").doc(usuario.uid);
+  const perfil = await perfilRef.get();
+  if (!perfil.exists) {
+    await perfilRef.set({
+      email: usuario.email,
+      criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+      bloqueado: false,
+    });
+    return false;
+  }
+  return perfil.data().bloqueado === true;
+}
+
+auth.onAuthStateChanged(async (usuario) => {
   if (usuario) {
+    const bloqueado = await garantirPerfilUsuario(usuario);
+    if (bloqueado) {
+      await auth.signOut();
+      authErroEl.textContent = "Sua conta foi bloqueada. Fale com o administrador.";
+      authErroEl.hidden = false;
+      return;
+    }
+
     telaLoginEl.hidden = true;
     appContainerEl.hidden = false;
     usuarioEmailEl.textContent = usuario.email;
+    document.getElementById("link-admin").hidden = usuario.email !== ADMIN_EMAIL;
     iniciarListenerSeries(db, usuario.uid);
   } else {
     telaLoginEl.hidden = false;
