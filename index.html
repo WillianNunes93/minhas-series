@@ -4,15 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Minhas Séries</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>📺 Minhas Séries</h1>
+    <h1><span class="emoji">📺</span> Minhas Séries</h1>
     <p>Organize suas séries favoritas por distribuidora</p>
   </header>
 
-  <main>
+  <div id="tela-login" class="auth-wrap">
+    <div class="auth-card">
+      <h2 id="auth-titulo">Entrar</h2>
+
+      <div class="campo">
+        <label for="auth-email">E-mail</label>
+        <input type="email" id="auth-email" placeholder="voce@email.com">
+      </div>
+
+      <div class="campo">
+        <label for="auth-senha">Senha</label>
+        <input type="password" id="auth-senha" placeholder="Mínimo 6 caracteres">
+      </div>
+
+      <p id="auth-erro" class="vazio aviso-inline" hidden></p>
+
+      <button type="button" id="btn-auth-entrar">Entrar</button>
+      <button type="button" id="btn-auth-cadastrar" class="btn-secundario">Criar conta</button>
+    </div>
+  </div>
+
+  <div id="app-container" hidden>
+    <div class="usuario-barra">
+      <span id="usuario-email"></span>
+      <button type="button" id="btn-sair">Sair</button>
+    </div>
+
+    <main>
     <section class="form-section">
       <h2>Adicionar série</h2>
 
@@ -33,23 +63,31 @@
             <strong id="preview-nome"></strong>
             <span id="preview-cancelada" class="badge cancelada" hidden>Cancelada</span>
             <div id="preview-temporadas" class="serie-meta" hidden></div>
-            <div id="preview-distribuidoras" class="serie-meta"></div>
           </div>
         </div>
 
-        <div class="campo" id="campo-distribuidora-manual" hidden>
-          <label for="distribuidora-manual">Distribuidora (não encontramos automaticamente)</label>
-          <select id="distribuidora-manual">
-            <option value="Netflix">Netflix</option>
-            <option value="Prime Video">Prime Video</option>
-            <option value="Disney+">Disney+</option>
-            <option value="Max">Max (HBO)</option>
-            <option value="Apple TV+">Apple TV+</option>
-            <option value="Paramount+">Paramount+</option>
-            <option value="Globoplay">Globoplay</option>
-            <option value="Star+">Star+</option>
-            <option value="Outro">Outro</option>
-          </select>
+        <div class="campo">
+          <label>Distribuidoras (desmarque o que estiver errado)</label>
+          <div id="preview-distribuidoras" class="distribuidoras-tags"></div>
+          <p id="aviso-sem-distribuidora" class="vazio aviso-inline" hidden>Selecione pelo menos uma distribuidora.</p>
+        </div>
+
+        <div class="campo">
+          <label for="distribuidora-manual">Adicionar outra distribuidora</label>
+          <div class="busca-linha">
+            <select id="distribuidora-manual">
+              <option value="Netflix">Netflix</option>
+              <option value="Prime Video">Prime Video</option>
+              <option value="Disney+">Disney+</option>
+              <option value="Max">Max (HBO)</option>
+              <option value="Apple TV+">Apple TV+</option>
+              <option value="Paramount+">Paramount+</option>
+              <option value="Globoplay">Globoplay</option>
+              <option value="Star+">Star+</option>
+              <option value="Outro">Outro</option>
+            </select>
+            <button type="button" id="btn-add-distribuidora">+ Adicionar</button>
+          </div>
         </div>
 
         <div class="campo">
@@ -81,8 +119,14 @@
       <div id="lista-series"></div>
     </section>
   </main>
+  </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="config.js"></script>
   <script src="script.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>

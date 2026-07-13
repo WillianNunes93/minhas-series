@@ -1,4 +1,3 @@
-const CHAVE_STORAGE = "minhas-series";
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w92";
 
@@ -8,9 +7,30 @@ const statusLabel = {
   "completa": "Completa",
 };
 
-let series = carregarSeries();
+const coresDistribuidora = {
+  "Netflix": "#e50914",
+  "Prime Video": "#00a8e1",
+  "Amazon Prime Video": "#00a8e1",
+  "Apple TV Amazon Channel": "#00a8e1",
+  "Disney+": "#113ccf",
+  "Max": "#8b5cf6",
+  "Apple TV+": "#a2aaad",
+  "Apple TV": "#a2aaad",
+  "Paramount+": "#0064ff",
+  "Globoplay": "#ff6600",
+  "Star+": "#0f0f0f",
+};
+
+function corDistribuidora(nome) {
+  return coresDistribuidora[nome] || "#8b5cf6";
+}
+
+let series = [];
+let seriesRef = null;
+let unsubscribeSeries = null;
 let distribuidoraSelecionada = "todas";
 let serieSelecionada = null;
+let distribuidorasEditaveis = [];
 
 const buscaNomeEl = document.getElementById("busca-nome");
 const btnBuscarEl = document.getElementById("btn-buscar");
@@ -22,19 +42,26 @@ const previewNomeEl = document.getElementById("preview-nome");
 const previewDistribuidorasEl = document.getElementById("preview-distribuidoras");
 const previewTemporadasEl = document.getElementById("preview-temporadas");
 const previewCanceladaEl = document.getElementById("preview-cancelada");
-const campoDistribuidoraManual = document.getElementById("campo-distribuidora-manual");
+const avisoSemDistribuidoraEl = document.getElementById("aviso-sem-distribuidora");
 const distribuidoraManualEl = document.getElementById("distribuidora-manual");
+const btnAddDistribuidoraEl = document.getElementById("btn-add-distribuidora");
 
 const listaEl = document.getElementById("lista-series");
 const filtroEl = document.getElementById("filtro-distribuidora");
 
-function carregarSeries() {
-  const dados = localStorage.getItem(CHAVE_STORAGE);
-  return dados ? JSON.parse(dados) : [];
+function iniciarListenerSeries(db, uid) {
+  seriesRef = db.collection("usuarios").doc(uid).collection("series");
+  unsubscribeSeries = seriesRef.onSnapshot((snapshot) => {
+    series = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    atualizarFiltro();
+    renderizar();
+  });
 }
 
-function salvarSeries() {
-  localStorage.setItem(CHAVE_STORAGE, JSON.stringify(series));
+function pararListenerSeries() {
+  if (unsubscribeSeries) unsubscribeSeries();
+  seriesRef = null;
+  series = [];
 }
 
 function distribuidorasDaSerie(serie) {
@@ -42,27 +69,19 @@ function distribuidorasDaSerie(serie) {
   return serie.distribuidora ? [serie.distribuidora] : ["Outro"];
 }
 
-function adicionarSerie(serie) {
-  series.push({ id: Date.now(), ...serie });
-  salvarSeries();
-  atualizarFiltro();
-  renderizar();
+async function adicionarSerie(serie) {
+  await seriesRef.add(serie);
 }
 
-function removerSerie(id) {
-  series = series.filter((s) => s.id !== id);
-  salvarSeries();
-  atualizarFiltro();
-  renderizar();
+async function removerSerie(id) {
+  await seriesRef.doc(id).delete();
 }
 
-function alternarStatus(id) {
+async function alternarStatus(id) {
   const ordem = ["quero-assistir", "assistindo", "completa"];
   const serie = series.find((s) => s.id === id);
   const proximoIndex = (ordem.indexOf(serie.status) + 1) % ordem.length;
-  serie.status = ordem[proximoIndex];
-  salvarSeries();
-  renderizar();
+  await seriesRef.doc(id).update({ status: ordem[proximoIndex] });
 }
 
 async function buscarSeriesTMDB(nome) {
@@ -88,7 +107,12 @@ function distribuidorasDosDetalhes(detalhes) {
 }
 
 function normalizarDistribuidora(nome) {
-  return nome.replace(/\s*(Standard|Basic|Premium)?\s*with Ads.*/i, "").trim();
+  return nome
+    .replace(/\s*(Standard|Basic|Premium)?\s*with Ads.*/i, "")
+    .replace(/\s*Amazon Channel$/i, "")
+    .replace(/\s*Roku Premium Channel$/i, "")
+    .replace(/\s*Channel$/i, "")
+    .trim();
 }
 
 function renderizarResultadosBusca(resultados) {
@@ -130,11 +154,35 @@ async function selecionarResultado(resultado) {
     temporadas: detalhes.number_of_seasons ?? null,
     episodios: detalhes.number_of_episodes ?? null,
     cancelada: detalhes.status === "Canceled",
-    distribuidoras,
   };
+  distribuidorasEditaveis = distribuidoras;
 
   resultadosBuscaEl.innerHTML = "";
   mostrarFormConfirmacao();
+}
+
+function renderizarDistribuidorasEditaveis() {
+  avisoSemDistribuidoraEl.hidden = true;
+
+  previewDistribuidorasEl.innerHTML = distribuidorasEditaveis.length
+    ? distribuidorasEditaveis
+        .map(
+          (d, index) => `
+            <span class="tag-distribuidora">
+              ${escapeHtml(d)}
+              <button type="button" class="tag-remover" data-index="${index}" title="Remover">×</button>
+            </span>
+          `
+        )
+        .join("")
+    : '<span class="serie-meta">Nenhuma distribuidora encontrada automaticamente. Adicione abaixo.</span>';
+
+  previewDistribuidorasEl.querySelectorAll(".tag-remover").forEach((botao) => {
+    botao.addEventListener("click", () => {
+      distribuidorasEditaveis.splice(Number(botao.dataset.index), 1);
+      renderizarDistribuidorasEditaveis();
+    });
+  });
 }
 
 function textoDuracao(serie) {
@@ -160,19 +208,14 @@ function mostrarFormConfirmacao() {
 
   previewCanceladaEl.hidden = !serieSelecionada.cancelada;
 
-  if (serieSelecionada.distribuidoras.length > 0) {
-    previewDistribuidorasEl.textContent = serieSelecionada.distribuidoras.join(", ");
-    campoDistribuidoraManual.hidden = true;
-  } else {
-    previewDistribuidorasEl.textContent = "Não encontramos automaticamente";
-    campoDistribuidoraManual.hidden = false;
-  }
+  renderizarDistribuidorasEditaveis();
 
   form.hidden = false;
 }
 
 function fecharFormConfirmacao() {
   serieSelecionada = null;
+  distribuidorasEditaveis = [];
   form.hidden = true;
   form.reset();
   buscaNomeEl.value = "";
@@ -219,8 +262,13 @@ function renderizar() {
     .sort()
     .map((distribuidora) => `
       <div class="grupo-distribuidora">
-        <div class="grupo-titulo">${escapeHtml(distribuidora)}</div>
-        ${grupos[distribuidora].map(renderizarCard).join("")}
+        <div class="grupo-titulo" style="--cor-marca: ${corDistribuidora(distribuidora)}">
+          <span class="grupo-titulo-texto">${escapeHtml(distribuidora)}</span>
+          <span class="grupo-contagem">${grupos[distribuidora].length}</span>
+        </div>
+        <div class="serie-grid">
+          ${grupos[distribuidora].map(renderizarCard).join("")}
+        </div>
       </div>
     `)
     .join("");
@@ -235,25 +283,30 @@ function renderizarCard(serie) {
     : "";
   const poster = serie.poster
     ? `<img class="serie-poster" src="${serie.poster}" alt="">`
-    : "";
+    : `<div class="poster-vazio-grande">🎬</div>`;
   const cancelada = serie.cancelada
-    ? `<span class="badge cancelada">Cancelada</span>`
+    ? `<span class="tag-cancelada">Cancelada</span>`
     : "";
 
   return `
     <div class="serie-card">
-      ${poster}
+      <div class="serie-poster-wrap">
+        ${poster}
+        ${cancelada}
+        <div class="serie-overlay">
+          <button class="icon-btn" onclick="alternarStatus('${serie.id}')" title="Mudar status">🔁</button>
+          <button class="icon-btn" onclick="removerSerie('${serie.id}')" title="Remover">✕</button>
+        </div>
+      </div>
       <div class="serie-info">
-        <span class="serie-nome">${escapeHtml(serie.nome)} ${cancelada}</span>
+        <span class="serie-nome">${escapeHtml(serie.nome)}</span>
         <span class="serie-meta">
           <span class="badge ${serie.status}">${statusLabel[serie.status]}</span>
+        </span>
+        <span class="serie-meta">
           ${duracao}
           ${nota}
         </span>
-      </div>
-      <div class="serie-acoes">
-        <button onclick="alternarStatus(${serie.id})">Mudar status</button>
-        <button onclick="removerSerie(${serie.id})">Remover</button>
       </div>
     </div>
   `;
@@ -293,25 +346,34 @@ buscaNomeEl.addEventListener("keydown", (evento) => {
   }
 });
 
-form.addEventListener("submit", (evento) => {
+btnAddDistribuidoraEl.addEventListener("click", () => {
+  const valor = distribuidoraManualEl.value;
+  if (!distribuidorasEditaveis.includes(valor)) {
+    distribuidorasEditaveis.push(valor);
+    renderizarDistribuidorasEditaveis();
+  }
+});
+
+form.addEventListener("submit", async (evento) => {
   evento.preventDefault();
   if (!serieSelecionada) return;
+
+  if (distribuidorasEditaveis.length === 0) {
+    avisoSemDistribuidoraEl.hidden = false;
+    return;
+  }
 
   const status = document.getElementById("status").value;
   const notaInput = document.getElementById("nota").value;
   const nota = notaInput === "" ? null : Number(notaInput);
 
-  const distribuidoras = serieSelecionada.distribuidoras.length > 0
-    ? serieSelecionada.distribuidoras
-    : [distribuidoraManualEl.value];
-
-  adicionarSerie({
+  await adicionarSerie({
     nome: serieSelecionada.nome,
     poster: serieSelecionada.poster,
     temporadas: serieSelecionada.temporadas,
     episodios: serieSelecionada.episodios,
     cancelada: serieSelecionada.cancelada,
-    distribuidoras,
+    distribuidoras: [...distribuidorasEditaveis],
     status,
     nota,
   });
@@ -323,6 +385,3 @@ filtroEl.addEventListener("change", (evento) => {
   distribuidoraSelecionada = evento.target.value;
   renderizar();
 });
-
-atualizarFiltro();
-renderizar();
