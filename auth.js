@@ -2,6 +2,8 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+let souAdmin = false;
+
 const telaLoginEl = document.getElementById("tela-login");
 const appContainerEl = document.getElementById("app-container");
 const usuarioEmailEl = document.getElementById("usuario-email");
@@ -47,10 +49,12 @@ auth.onAuthStateChanged(async (usuario) => {
       return;
     }
 
+    souAdmin = usuario.email === ADMIN_EMAIL;
+
     telaLoginEl.hidden = true;
     appContainerEl.hidden = false;
     usuarioEmailEl.textContent = usuario.email;
-    document.getElementById("link-admin").hidden = usuario.email !== ADMIN_EMAIL;
+    document.getElementById("link-admin").hidden = !souAdmin;
     iniciarListenerSeries(db, usuario.uid);
   } else {
     telaLoginEl.hidden = false;
