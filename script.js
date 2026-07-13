@@ -1,5 +1,6 @@
 const TMDB_BASE = "https://api.themoviedb.org/3";
-const TMDB_IMG = "https://image.tmdb.org/t/p/w92";
+const TMDB_IMG = "https://image.tmdb.org/t/p/w342";
+const TMDB_BACKDROP = "https://image.tmdb.org/t/p/w780";
 
 const statusLabel = {
   "quero-assistir": "Quero assistir",
@@ -37,8 +38,13 @@ const btnBuscarEl = document.getElementById("btn-buscar");
 const resultadosBuscaEl = document.getElementById("resultados-busca");
 
 const form = document.getElementById("form-serie");
+const previewBackdropEl = document.getElementById("preview-backdrop");
 const previewPosterEl = document.getElementById("preview-poster");
 const previewNomeEl = document.getElementById("preview-nome");
+const previewTaglineEl = document.getElementById("preview-tagline");
+const previewNotaTmdbEl = document.getElementById("preview-nota-tmdb");
+const previewGenerosEl = document.getElementById("preview-generos");
+const previewSinopseEl = document.getElementById("preview-sinopse");
 const previewDistribuidorasEl = document.getElementById("preview-distribuidoras");
 const previewTemporadasEl = document.getElementById("preview-temporadas");
 const previewCanceladaEl = document.getElementById("preview-cancelada");
@@ -48,6 +54,23 @@ const btnAddDistribuidoraEl = document.getElementById("btn-add-distribuidora");
 
 const listaEl = document.getElementById("lista-series");
 const filtroEl = document.getElementById("filtro-distribuidora");
+
+const tabButtons = document.querySelectorAll(".tab-btn");
+const paineisTab = {
+  consultar: document.getElementById("painel-consultar"),
+  lista: document.getElementById("painel-lista"),
+};
+
+function mudarTab(nomeTab) {
+  tabButtons.forEach((botao) => botao.classList.toggle("ativa", botao.dataset.tab === nomeTab));
+  Object.entries(paineisTab).forEach(([nome, elemento]) => {
+    elemento.hidden = nome !== nomeTab;
+  });
+}
+
+tabButtons.forEach((botao) => {
+  botao.addEventListener("click", () => mudarTab(botao.dataset.tab));
+});
 
 function iniciarListenerSeries(db, uid) {
   seriesRef = db.collection("usuarios").doc(uid).collection("series");
@@ -126,17 +149,25 @@ function renderizarResultadosBusca(resultados) {
       const ano = r.first_air_date ? r.first_air_date.slice(0, 4) : "?";
       const poster = r.poster_path
         ? `<img src="${TMDB_IMG}${r.poster_path}" alt="">`
-        : `<div class="poster-vazio">?</div>`;
+        : `<div class="poster-vazio-grande">🎬</div>`;
+      const sinopse = r.overview
+        ? `<p class="resultado-sinopse">${escapeHtml(r.overview)}</p>`
+        : "";
+
       return `
-        <button type="button" class="resultado-item" data-index="${index}">
-          ${poster}
-          <span>${escapeHtml(r.name)} <span class="serie-meta">(${ano})</span></span>
+        <button type="button" class="resultado-card" data-index="${index}">
+          <div class="resultado-poster-wrap">${poster}</div>
+          <div class="resultado-info">
+            <span class="serie-nome">${escapeHtml(r.name)}</span>
+            <span class="serie-meta">${ano}${r.vote_average ? ` · ★ ${r.vote_average.toFixed(1)}` : ""}</span>
+            ${sinopse}
+          </div>
         </button>
       `;
     })
     .join("");
 
-  resultadosBuscaEl.querySelectorAll(".resultado-item").forEach((botao) => {
+  resultadosBuscaEl.querySelectorAll(".resultado-card").forEach((botao) => {
     botao.addEventListener("click", () => selecionarResultado(resultados[Number(botao.dataset.index)]));
   });
 }
@@ -151,6 +182,11 @@ async function selecionarResultado(resultado) {
     tmdbId: resultado.id,
     nome: resultado.name,
     poster: resultado.poster_path ? `${TMDB_IMG}${resultado.poster_path}` : null,
+    backdrop: detalhes.backdrop_path ? `${TMDB_BACKDROP}${detalhes.backdrop_path}` : null,
+    tagline: detalhes.tagline || "",
+    sinopse: detalhes.overview || "",
+    generos: (detalhes.genres || []).map((g) => g.name),
+    notaTmdb: detalhes.vote_average || 0,
     temporadas: detalhes.number_of_seasons ?? null,
     episodios: detalhes.number_of_episodes ?? null,
     cancelada: detalhes.status === "Canceled",
@@ -213,6 +249,29 @@ function mostrarFormConfirmacao() {
   } else {
     previewPosterEl.hidden = true;
   }
+
+  if (serieSelecionada.backdrop) {
+    previewBackdropEl.src = serieSelecionada.backdrop;
+    previewBackdropEl.hidden = false;
+  } else {
+    previewBackdropEl.hidden = true;
+  }
+
+  previewTaglineEl.textContent = serieSelecionada.tagline;
+  previewTaglineEl.hidden = !serieSelecionada.tagline;
+
+  if (serieSelecionada.notaTmdb > 0) {
+    previewNotaTmdbEl.textContent = `★ ${serieSelecionada.notaTmdb.toFixed(1)} TMDB`;
+    previewNotaTmdbEl.hidden = false;
+  } else {
+    previewNotaTmdbEl.hidden = true;
+  }
+
+  previewGenerosEl.innerHTML = serieSelecionada.generos
+    .map((g) => `<span class="tag-genero">${escapeHtml(g)}</span>`)
+    .join("");
+
+  previewSinopseEl.textContent = serieSelecionada.sinopse || "Sinopse não disponível.";
 
   const duracaoTexto = textoDuracao(serieSelecionada);
   previewTemporadasEl.textContent = duracaoTexto;
@@ -391,6 +450,7 @@ form.addEventListener("submit", async (evento) => {
   });
 
   fecharFormConfirmacao();
+  mudarTab("lista");
 });
 
 filtroEl.addEventListener("change", (evento) => {
