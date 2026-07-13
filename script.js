@@ -164,18 +164,30 @@ async function selecionarResultado(resultado) {
 function renderizarDistribuidorasEditaveis() {
   avisoSemDistribuidoraEl.hidden = true;
 
-  previewDistribuidorasEl.innerHTML = distribuidorasEditaveis.length
-    ? distribuidorasEditaveis
-        .map(
-          (d, index) => `
-            <span class="tag-distribuidora">
-              ${escapeHtml(d)}
-              <button type="button" class="tag-remover" data-index="${index}" title="Remover">×</button>
-            </span>
-          `
-        )
-        .join("")
-    : '<span class="serie-meta">Nenhuma distribuidora encontrada automaticamente. Adicione abaixo.</span>';
+  document.getElementById("label-distribuidoras").textContent = souAdmin
+    ? "Distribuidoras (desmarque o que estiver errado)"
+    : "Distribuidoras";
+  document.getElementById("campo-add-distribuidora").hidden = !souAdmin;
+
+  if (distribuidorasEditaveis.length === 0) {
+    previewDistribuidorasEl.innerHTML = souAdmin
+      ? '<span class="serie-meta">Nenhuma distribuidora encontrada automaticamente. Adicione abaixo.</span>'
+      : '<span class="serie-meta">Nenhuma distribuidora encontrada automaticamente.</span>';
+    return;
+  }
+
+  previewDistribuidorasEl.innerHTML = distribuidorasEditaveis
+    .map(
+      (d, index) => `
+        <span class="tag-distribuidora">
+          ${escapeHtml(d)}
+          ${souAdmin ? `<button type="button" class="tag-remover" data-index="${index}" title="Remover">×</button>` : ""}
+        </span>
+      `
+    )
+    .join("");
+
+  if (!souAdmin) return;
 
   previewDistribuidorasEl.querySelectorAll(".tag-remover").forEach((botao) => {
     botao.addEventListener("click", () => {
