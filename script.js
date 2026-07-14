@@ -19,6 +19,7 @@ let unsubscribeNotificacoes = null;
 let atividades = [];
 let atividadesRef = null;
 let unsubscribeAtividades = null;
+let seriesCarregadas = false;
 let distribuidoraSelecionada = "todas";
 let textoBuscaLista = "";
 let ordemSelecionada = "recentes";
@@ -82,9 +83,11 @@ function iniciarListenerSeries(db, uid) {
   seriesRef = db.collection("usuarios").doc(uid).collection("series");
   unsubscribeSeries = seriesRef.onSnapshot((snapshot) => {
     series = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    seriesCarregadas = true;
     atualizarFiltro();
     renderizar();
     renderizarDashboard();
+    TodayOverview();
   });
 }
 
@@ -92,6 +95,7 @@ function pararListenerSeries() {
   if (unsubscribeSeries) unsubscribeSeries();
   seriesRef = null;
   series = [];
+  seriesCarregadas = false;
 }
 
 function iniciarListenerAtividades(db, uid) {
@@ -179,7 +183,7 @@ function distribuidorasDaSerie(serie) {
 }
 
 async function adicionarSerie(serie) {
-  await seriesRef.add(serie);
+  await seriesRef.add({ ...serie, progressUpdatedAt: firebase.firestore.FieldValue.serverTimestamp() });
   await registrarAtividade("adicionada", serie.nome, "Série adicionada à lista");
 }
 
@@ -191,7 +195,11 @@ async function removerSerie(id) {
 
 async function mudarStatus(id, novoStatus) {
   const serie = series.find((s) => s.id === id);
-  await seriesRef.doc(id).update({ status: novoStatus });
+  const atualizacao = { status: novoStatus };
+  if (novoStatus === "assistindo") {
+    atualizacao.progressUpdatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  }
+  await seriesRef.doc(id).update(atualizacao);
   if (serie) {
     await registrarAtividade(
       "status-alterado",
@@ -208,7 +216,13 @@ async function alternarTemporadaAssistida(id, numeroTemporada) {
   const novas = marcandoComoAssistida
     ? [...atuais, numeroTemporada].sort((a, b) => a - b)
     : atuais.filter((n) => n !== numeroTemporada);
-  await seriesRef.doc(id).update({ temporadasAssistidas: novas });
+
+  const atualizacao = { temporadasAssistidas: novas };
+  if (marcandoComoAssistida) {
+    atualizacao.progressUpdatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  }
+  await seriesRef.doc(id).update(atualizacao);
+
   if (marcandoComoAssistida) {
     await registrarAtividade("temporada-concluida", serie.nome, `Temporada ${numeroTemporada} concluída`);
   }
