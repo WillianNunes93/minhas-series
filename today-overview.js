@@ -47,7 +47,7 @@ function getTodayOverview(listaSeries) {
       }
     }
 
-    if (serie.status === "assistindo") {
+    if (serie.status === "assistindo" || serie.status === "pausada") {
       const diasParada = diasDesdeTimestamp(serie.progressUpdatedAt);
       if (diasParada !== null && diasParada > DIAS_LIMITE_PARADA) {
         inactive.push({ ...serie, diasParada });
