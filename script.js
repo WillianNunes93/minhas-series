@@ -67,6 +67,7 @@ const paineisTab = {
   consultar: document.getElementById("painel-consultar"),
   lista: document.getElementById("painel-lista"),
   timeline: document.getElementById("painel-timeline"),
+  estatisticas: document.getElementById("painel-estatisticas"),
 };
 
 function mudarTab(nomeTab) {
@@ -91,6 +92,7 @@ function iniciarListenerSeries(db, uid) {
     TodayOverview();
     TimelinePage();
     atualizarModalEpisodios();
+    EstatisticasPage();
   });
 }
 
