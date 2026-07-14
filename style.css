@@ -1684,6 +1684,35 @@ button:active {
   color: var(--cor-positivo);
 }
 
+.episodios-acoes {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.7rem;
+}
+
+.btn-marcar-todos {
+  width: auto;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.78rem;
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-fraco);
+  box-shadow: none;
+}
+
+.btn-marcar-todos:hover {
+  border-color: var(--cor-destaque);
+  color: var(--cor-texto);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-marcar-todos:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .episodio-lista {
   display: flex;
   flex-direction: column;
