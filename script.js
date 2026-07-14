@@ -5,7 +5,9 @@ const TMDB_BACKDROP = "https://image.tmdb.org/t/p/w780";
 const statusLabel = {
   "quero-assistir": "Quero assistir",
   "assistindo": "Assistindo",
-  "completa": "Completa",
+  "pausada": "Pausada",
+  "completa": "Concluída",
+  "abandonada": "Abandonada",
 };
 
 const coresDistribuidora = {
@@ -29,6 +31,9 @@ function corDistribuidora(nome) {
 let series = [];
 let seriesRef = null;
 let unsubscribeSeries = null;
+let notificacoes = [];
+let notificacoesRef = null;
+let unsubscribeNotificacoes = null;
 let distribuidoraSelecionada = "todas";
 let textoBuscaLista = "";
 let ordemSelecionada = "recentes";
@@ -65,6 +70,10 @@ const continuarSecaoEl = document.getElementById("continuar-assistindo-secao");
 const continuarGridEl = document.getElementById("continuar-assistindo-grid");
 const btnAtualizarTemporadasEl = document.getElementById("btn-atualizar-temporadas");
 const statusAtualizarTemporadasEl = document.getElementById("status-atualizar-temporadas");
+const btnNotificacoesEl = document.getElementById("btn-notificacoes");
+const badgeNotificacoesEl = document.getElementById("badge-notificacoes");
+const painelNotificacoesEl = document.getElementById("painel-notificacoes");
+const listaNotificacoesEl = document.getElementById("lista-notificacoes");
 
 const tabButtons = document.querySelectorAll(".tab-btn");
 const paineisTab = {
@@ -98,6 +107,58 @@ function pararListenerSeries() {
   series = [];
 }
 
+function iniciarListenerNotificacoes(db, uid) {
+  notificacoesRef = db.collection("usuarios").doc(uid).collection("notificacoes");
+  unsubscribeNotificacoes = notificacoesRef
+    .orderBy("criadoEm", "desc")
+    .limit(30)
+    .onSnapshot((snapshot) => {
+      notificacoes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      renderizarNotificacoes();
+    });
+}
+
+function pararListenerNotificacoes() {
+  if (unsubscribeNotificacoes) unsubscribeNotificacoes();
+  notificacoesRef = null;
+  notificacoes = [];
+}
+
+async function criarNotificacao(mensagem) {
+  await notificacoesRef.add({
+    mensagem,
+    lida: false,
+    criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+}
+
+function renderizarNotificacoes() {
+  const naoLidas = notificacoes.filter((n) => !n.lida).length;
+  badgeNotificacoesEl.hidden = naoLidas === 0;
+  badgeNotificacoesEl.textContent = naoLidas;
+
+  if (notificacoes.length === 0) {
+    listaNotificacoesEl.innerHTML = '<p class="vazio">Nenhuma notificação ainda.</p>';
+    return;
+  }
+
+  listaNotificacoesEl.innerHTML = notificacoes
+    .map(
+      (n) => `
+        <div class="notificacao-item ${n.lida ? "" : "nao-lida"}">
+          <span>${escapeHtml(n.mensagem)}</span>
+          <span class="notificacao-data">${n.criadoEm ? n.criadoEm.toDate().toLocaleDateString("pt-BR") : "agora"}</span>
+        </div>
+      `
+    )
+    .join("");
+}
+
+async function marcarNotificacoesComoLidas() {
+  const naoLidas = notificacoes.filter((n) => !n.lida);
+  await Promise.all(naoLidas.map((n) => notificacoesRef.doc(n.id).update({ lida: true })));
+}
+
 function distribuidorasDaSerie(serie) {
   if (serie.distribuidoras) return serie.distribuidoras;
   return serie.distribuidora ? [serie.distribuidora] : ["Outro"];
@@ -111,11 +172,17 @@ async function removerSerie(id) {
   await seriesRef.doc(id).delete();
 }
 
-async function alternarStatus(id) {
-  const ordem = ["quero-assistir", "assistindo", "completa"];
+async function mudarStatus(id, novoStatus) {
+  await seriesRef.doc(id).update({ status: novoStatus });
+}
+
+async function alternarTemporadaAssistida(id, numeroTemporada) {
   const serie = series.find((s) => s.id === id);
-  const proximoIndex = (ordem.indexOf(serie.status) + 1) % ordem.length;
-  await seriesRef.doc(id).update({ status: ordem[proximoIndex] });
+  const atuais = serie.temporadasAssistidas || [];
+  const novas = atuais.includes(numeroTemporada)
+    ? atuais.filter((n) => n !== numeroTemporada)
+    : [...atuais, numeroTemporada].sort((a, b) => a - b);
+  await seriesRef.doc(id).update({ temporadasAssistidas: novas });
 }
 
 async function buscarSeriesTMDB(nome) {
@@ -537,6 +604,16 @@ function renderizarCard(serie) {
     `
     : `<span>${temNota ? `⭐ ${serie.nota}` : "Sem nota"}</span>`;
 
+  const seletorStatus = `
+    <select class="select-status status-${serie.status}" onchange="mudarStatus('${serie.id}', this.value)" onclick="event.stopPropagation()">
+      ${Object.entries(statusLabel)
+        .map(([valor, rotulo]) => `<option value="${valor}" ${serie.status === valor ? "selected" : ""}>${rotulo}</option>`)
+        .join("")}
+    </select>
+  `;
+
+  const pillsTemporadas = renderizarPillsTemporadas(serie);
+
   return `
     <div class="serie-card">
       <div class="serie-poster-wrap">
@@ -544,7 +621,6 @@ function renderizarCard(serie) {
         ${cancelada}
         <div class="serie-overlay">
           ${trailer}
-          <button class="icon-btn" onclick="alternarStatus('${serie.id}')" title="Mudar status">🔁</button>
           <button class="icon-btn" onclick="iniciarEdicaoNota('${serie.id}')" title="Editar nota">✏️</button>
           <button class="icon-btn" onclick="removerSerie('${serie.id}')" title="Remover">✕</button>
         </div>
@@ -552,7 +628,7 @@ function renderizarCard(serie) {
       <div class="serie-info">
         <span class="serie-nome">${escapeHtml(serie.nome)}</span>
         <span class="serie-meta">
-          <span class="badge ${serie.status}">${statusLabel[serie.status]}</span>
+          ${seletorStatus}
         </span>
         <span class="serie-meta">
           ${duracao}
@@ -561,9 +637,30 @@ function renderizarCard(serie) {
           ${linhaNota}
         </span>
         ${proximaTemporada ? `<span class="serie-meta">${proximaTemporada}</span>` : ""}
+        ${pillsTemporadas}
       </div>
     </div>
   `;
+}
+
+function renderizarPillsTemporadas(serie) {
+  if (!serie.temporadas) return "";
+
+  const assistidas = serie.temporadasAssistidas || [];
+  const pills = [];
+  for (let numero = 1; numero <= serie.temporadas; numero += 1) {
+    const marcada = assistidas.includes(numero);
+    pills.push(`
+      <button
+        type="button"
+        class="pill-temporada ${marcada ? "marcada" : ""}"
+        onclick="event.stopPropagation(); alternarTemporadaAssistida('${serie.id}', ${numero})"
+        title="Temporada ${numero}${marcada ? " (assistida)" : ""}"
+      >${numero}</button>
+    `);
+  }
+
+  return `<div class="temporadas-pills" title="Marque as temporadas já assistidas">${pills.join("")}</div>`;
 }
 
 function iniciarEdicaoNota(id) {
@@ -678,10 +775,12 @@ async function resolverTmdbId(serie) {
   }
 }
 
-btnAtualizarTemporadasEl.addEventListener("click", async () => {
-  btnAtualizarTemporadasEl.disabled = true;
-  statusAtualizarTemporadasEl.hidden = false;
-  statusAtualizarTemporadasEl.textContent = `Verificando 0 de ${series.length}...`;
+async function verificarRenovacoes({ silencioso } = {}) {
+  if (!silencioso) {
+    btnAtualizarTemporadasEl.disabled = true;
+    statusAtualizarTemporadasEl.hidden = false;
+    statusAtualizarTemporadasEl.textContent = `Verificando 0 de ${series.length}...`;
+  }
 
   let verificadas = 0;
   let falhas = 0;
@@ -701,20 +800,62 @@ btnAtualizarTemporadasEl.addEventListener("click", async () => {
       }
 
       const proximaTemporada = statusProximaTemporada(detalhes);
+      const textoNovo = proximaTemporada ? proximaTemporada.texto : null;
+      const tipoNovo = proximaTemporada ? proximaTemporada.tipo : null;
+
+      const jaTinhaInformacao = serie.proximaTemporadaTexto !== undefined && serie.proximaTemporadaTexto !== null;
+      if (jaTinhaInformacao && textoNovo !== serie.proximaTemporadaTexto) {
+        await criarNotificacao(`${serie.nome}: ${textoNovo || "status de renovação atualizado"}`);
+      }
+
       await seriesRef.doc(serie.id).update({
         tmdbId,
         cancelada: detalhes.status === "Canceled",
-        proximaTemporadaTexto: proximaTemporada ? proximaTemporada.texto : null,
-        proximaTemporadaTipo: proximaTemporada ? proximaTemporada.tipo : null,
+        proximaTemporadaTexto: textoNovo,
+        proximaTemporadaTipo: tipoNovo,
       });
 
       verificadas += 1;
-      statusAtualizarTemporadasEl.textContent = `Verificando ${verificadas + falhas} de ${series.length}...`;
+      if (!silencioso) {
+        statusAtualizarTemporadasEl.textContent = `Verificando ${verificadas + falhas} de ${series.length}...`;
+      }
     })
   );
 
-  statusAtualizarTemporadasEl.textContent = falhas > 0
-    ? `Atualizado! ${verificadas} série(s) verificadas, ${falhas} não encontrada(s).`
-    : `Atualizado! ${verificadas} série(s) verificadas.`;
-  btnAtualizarTemporadasEl.disabled = false;
+  if (!silencioso) {
+    statusAtualizarTemporadasEl.textContent = falhas > 0
+      ? `Atualizado! ${verificadas} série(s) verificadas, ${falhas} não encontrada(s).`
+      : `Atualizado! ${verificadas} série(s) verificadas.`;
+    btnAtualizarTemporadasEl.disabled = false;
+  }
+}
+
+function deveVerificarRenovacoesHoje() {
+  const hoje = new Date().toISOString().slice(0, 10);
+  return localStorage.getItem("ultimaVerificacaoTemporadas") !== hoje;
+}
+
+function marcarRenovacoesVerificadasHoje() {
+  const hoje = new Date().toISOString().slice(0, 10);
+  localStorage.setItem("ultimaVerificacaoTemporadas", hoje);
+}
+
+async function verificarRenovacoesAutomaticamente() {
+  if (!deveVerificarRenovacoesHoje()) return;
+  await verificarRenovacoes({ silencioso: true });
+  marcarRenovacoesVerificadasHoje();
+}
+
+btnAtualizarTemporadasEl.addEventListener("click", () => verificarRenovacoes({ silencioso: false }));
+
+btnNotificacoesEl.addEventListener("click", (evento) => {
+  evento.stopPropagation();
+  painelNotificacoesEl.hidden = !painelNotificacoesEl.hidden;
+  if (!painelNotificacoesEl.hidden) marcarNotificacoesComoLidas();
+});
+
+document.addEventListener("click", (evento) => {
+  if (!painelNotificacoesEl.hidden && !evento.target.closest(".notificacoes-wrap")) {
+    painelNotificacoesEl.hidden = true;
+  }
 });

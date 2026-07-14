@@ -40,6 +40,15 @@
     <div class="usuario-barra">
       <span id="usuario-email"></span>
       <a id="link-admin" href="admin.html" hidden>Painel admin</a>
+      <div class="notificacoes-wrap">
+        <button type="button" id="btn-notificacoes" class="btn-notificacoes">
+          🔔<span id="badge-notificacoes" class="notif-badge" hidden>0</span>
+        </button>
+        <div id="painel-notificacoes" class="painel-notificacoes" hidden>
+          <p class="painel-notificacoes-titulo">Notificações</p>
+          <div id="lista-notificacoes"></div>
+        </div>
+      </div>
       <button type="button" id="btn-sair">Sair</button>
     </div>
 
@@ -117,7 +126,9 @@
             <select id="status" required>
               <option value="quero-assistir">Quero assistir</option>
               <option value="assistindo">Assistindo</option>
-              <option value="completa">Completa</option>
+              <option value="pausada">Pausada</option>
+              <option value="completa">Concluída</option>
+              <option value="abandonada">Abandonada</option>
             </select>
           </div>
 
