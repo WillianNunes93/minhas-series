@@ -49,6 +49,7 @@ const previewNotaTmdbEl = document.getElementById("preview-nota-tmdb");
 const previewGenerosEl = document.getElementById("preview-generos");
 const previewSinopseEl = document.getElementById("preview-sinopse");
 const previewTrailerEl = document.getElementById("preview-trailer");
+const previewProximaTemporadaEl = document.getElementById("preview-proxima-temporada");
 const previewDistribuidorasEl = document.getElementById("preview-distribuidoras");
 const previewTemporadasEl = document.getElementById("preview-temporadas");
 const previewCanceladaEl = document.getElementById("preview-cancelada");
@@ -62,6 +63,8 @@ const buscaListaEl = document.getElementById("busca-lista");
 const ordenarListaEl = document.getElementById("ordenar-lista");
 const continuarSecaoEl = document.getElementById("continuar-assistindo-secao");
 const continuarGridEl = document.getElementById("continuar-assistindo-grid");
+const btnAtualizarTemporadasEl = document.getElementById("btn-atualizar-temporadas");
+const statusAtualizarTemporadasEl = document.getElementById("status-atualizar-temporadas");
 
 const tabButtons = document.querySelectorAll(".tab-btn");
 const paineisTab = {
@@ -128,6 +131,54 @@ async function buscarDetalhesTMDB(tmdbId) {
   const resposta = await fetch(url);
   if (!resposta.ok) throw new Error("Falha ao buscar detalhes no TMDB");
   return resposta.json();
+}
+
+async function buscarStatusTMDB(tmdbId) {
+  const url = `${TMDB_BASE}/tv/${tmdbId}?api_key=${TMDB_API_KEY}&language=pt-BR`;
+  const resposta = await fetch(url);
+  if (!resposta.ok) return null;
+  return resposta.json();
+}
+
+function formatarDataTMDB(dataIso) {
+  if (!dataIso) return null;
+  const [ano, mes, dia] = dataIso.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+function statusProximaTemporada(detalhes) {
+  if (detalhes.status === "Canceled") {
+    return { texto: "Cancelada", tipo: "cancelada" };
+  }
+
+  if (detalhes.status === "Ended") {
+    return { texto: "Encerrada, sem novas temporadas", tipo: "encerrada" };
+  }
+
+  const proximo = detalhes.next_episode_to_air;
+  if (proximo && proximo.episode_number === 1 && proximo.air_date) {
+    return {
+      texto: `Temporada ${proximo.season_number} estreia em ${formatarDataTMDB(proximo.air_date)}`,
+      tipo: "confirmada",
+    };
+  }
+
+  if (proximo && proximo.air_date) {
+    return {
+      texto: `Em exibição · próximo episódio em ${formatarDataTMDB(proximo.air_date)}`,
+      tipo: "em-exibicao",
+    };
+  }
+
+  if (detalhes.status === "In Production" || detalhes.status === "Planned") {
+    return { texto: "Nova temporada confirmada (sem data ainda)", tipo: "sem-data" };
+  }
+
+  if (detalhes.status === "Returning Series") {
+    return { texto: "Renovada, aguardando novidades", tipo: "sem-data" };
+  }
+
+  return null;
 }
 
 async function buscarTrailerTMDB(tmdbId) {
@@ -216,6 +267,7 @@ async function selecionarResultado(resultado) {
     temporadas: detalhes.number_of_seasons ?? null,
     episodios: detalhes.number_of_episodes ?? null,
     cancelada: detalhes.status === "Canceled",
+    proximaTemporada: statusProximaTemporada(detalhes),
     trailerUrl,
     recomendacoes,
   };
@@ -336,6 +388,14 @@ function mostrarFormConfirmacao() {
   previewTemporadasEl.hidden = !duracaoTexto;
 
   previewCanceladaEl.hidden = !serieSelecionada.cancelada;
+
+  if (serieSelecionada.proximaTemporada) {
+    previewProximaTemporadaEl.textContent = serieSelecionada.proximaTemporada.texto;
+    previewProximaTemporadaEl.className = `badge ${serieSelecionada.proximaTemporada.tipo}`;
+    previewProximaTemporadaEl.hidden = false;
+  } else {
+    previewProximaTemporadaEl.hidden = true;
+  }
 
   if (serieSelecionada.trailerUrl) {
     previewTrailerEl.href = serieSelecionada.trailerUrl;
@@ -461,6 +521,9 @@ function renderizarCard(serie) {
   const cancelada = serie.cancelada
     ? `<span class="tag-cancelada">Cancelada</span>`
     : "";
+  const proximaTemporada = serie.proximaTemporadaTexto
+    ? `<span class="badge ${serie.proximaTemporadaTipo || ""}">${escapeHtml(serie.proximaTemporadaTexto)}</span>`
+    : "";
   const trailer = serie.trailerUrl
     ? `<a class="icon-btn" href="${serie.trailerUrl}" target="_blank" rel="noopener" title="Assistir trailer" onclick="event.stopPropagation()">▶</a>`
     : "";
@@ -497,6 +560,7 @@ function renderizarCard(serie) {
         <span class="serie-meta">
           ${linhaNota}
         </span>
+        ${proximaTemporada ? `<span class="serie-meta">${proximaTemporada}</span>` : ""}
       </div>
     </div>
   `;
@@ -572,10 +636,13 @@ form.addEventListener("submit", async (evento) => {
   await adicionarSerie({
     nome: serieSelecionada.nome,
     poster: serieSelecionada.poster,
+    tmdbId: serieSelecionada.tmdbId,
     temporadas: serieSelecionada.temporadas,
     episodios: serieSelecionada.episodios,
     cancelada: serieSelecionada.cancelada,
     trailerUrl: serieSelecionada.trailerUrl || null,
+    proximaTemporadaTexto: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.texto : null,
+    proximaTemporadaTipo: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.tipo : null,
     distribuidoras: [...distribuidorasEditaveis],
     status,
     nota,
@@ -599,4 +666,55 @@ buscaListaEl.addEventListener("input", (evento) => {
 ordenarListaEl.addEventListener("change", (evento) => {
   ordemSelecionada = evento.target.value;
   renderizar();
+});
+
+async function resolverTmdbId(serie) {
+  if (serie.tmdbId) return serie.tmdbId;
+  try {
+    const resultados = await buscarSeriesTMDB(serie.nome);
+    return resultados[0] ? resultados[0].id : null;
+  } catch (erro) {
+    return null;
+  }
+}
+
+btnAtualizarTemporadasEl.addEventListener("click", async () => {
+  btnAtualizarTemporadasEl.disabled = true;
+  statusAtualizarTemporadasEl.hidden = false;
+  statusAtualizarTemporadasEl.textContent = `Verificando 0 de ${series.length}...`;
+
+  let verificadas = 0;
+  let falhas = 0;
+
+  await Promise.allSettled(
+    series.map(async (serie) => {
+      const tmdbId = await resolverTmdbId(serie);
+      if (!tmdbId) {
+        falhas += 1;
+        return;
+      }
+
+      const detalhes = await buscarStatusTMDB(tmdbId);
+      if (!detalhes) {
+        falhas += 1;
+        return;
+      }
+
+      const proximaTemporada = statusProximaTemporada(detalhes);
+      await seriesRef.doc(serie.id).update({
+        tmdbId,
+        cancelada: detalhes.status === "Canceled",
+        proximaTemporadaTexto: proximaTemporada ? proximaTemporada.texto : null,
+        proximaTemporadaTipo: proximaTemporada ? proximaTemporada.tipo : null,
+      });
+
+      verificadas += 1;
+      statusAtualizarTemporadasEl.textContent = `Verificando ${verificadas + falhas} de ${series.length}...`;
+    })
+  );
+
+  statusAtualizarTemporadasEl.textContent = falhas > 0
+    ? `Atualizado! ${verificadas} série(s) verificadas, ${falhas} não encontrada(s).`
+    : `Atualizado! ${verificadas} série(s) verificadas.`;
+  btnAtualizarTemporadasEl.disabled = false;
 });
