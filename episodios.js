@@ -54,6 +54,16 @@ async function marcarTodosEpisodiosAssistidos(serieId, numeroTemporada) {
   });
 }
 
+async function desmarcarTodosEpisodiosAssistidos(serieId, numeroTemporada) {
+  const serie = series.find((s) => s.id === serieId);
+  if (!serie) return;
+
+  await seriesRef.doc(serieId).update({
+    [`episodiosAssistidos.${numeroTemporada}`]: [],
+    progressUpdatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+}
+
 function TemporadaSeletor(serie, temporadaAtiva) {
   const pills = [];
   for (let numero = 1; numero <= serie.temporadas; numero += 1) {
@@ -95,11 +105,15 @@ function ListaEpisodios(serie, numeroTemporada) {
 
   const proximo = proximoEpisodioNaoAssistido(total, assistidos);
   const todosAssistidos = assistidos.length >= total;
+  const nenhumAssistido = assistidos.length === 0;
 
   return `
     <div class="episodios-acoes">
       <button type="button" class="btn-marcar-todos" data-marcar-todos="${numeroTemporada}" ${todosAssistidos ? "disabled" : ""}>
         Marcar todos como assistidos
+      </button>
+      <button type="button" class="btn-marcar-todos" data-desmarcar-todos="${numeroTemporada}" ${nenhumAssistido ? "disabled" : ""}>
+        Desmarcar todos
       </button>
     </div>
     <div class="episodio-lista">${itens.join("")}</div>
@@ -156,6 +170,12 @@ modalEpisodiosCorpoEl.addEventListener("click", (evento) => {
   const botaoMarcarTodos = evento.target.closest("[data-marcar-todos]");
   if (botaoMarcarTodos) {
     marcarTodosEpisodiosAssistidos(serieModalId, Number(botaoMarcarTodos.dataset.marcarTodos));
+    return;
+  }
+
+  const botaoDesmarcarTodos = evento.target.closest("[data-desmarcar-todos]");
+  if (botaoDesmarcarTodos) {
+    desmarcarTodosEpisodiosAssistidos(serieModalId, Number(botaoDesmarcarTodos.dataset.desmarcarTodos));
   }
 });
 
