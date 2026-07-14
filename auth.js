@@ -57,6 +57,7 @@ auth.onAuthStateChanged(async (usuario) => {
     document.getElementById("link-admin").hidden = !souAdmin;
     iniciarListenerSeries(db, usuario.uid);
     iniciarListenerNotificacoes(db, usuario.uid);
+    iniciarListenerAtividades(db, usuario.uid);
 
     setTimeout(() => verificarRenovacoesAutomaticamente(), 3000);
   } else {
@@ -64,6 +65,7 @@ auth.onAuthStateChanged(async (usuario) => {
     appContainerEl.hidden = true;
     pararListenerSeries();
     pararListenerNotificacoes();
+    pararListenerAtividades();
   }
 });
 

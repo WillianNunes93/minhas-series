@@ -16,6 +16,9 @@ let unsubscribeSeries = null;
 let notificacoes = [];
 let notificacoesRef = null;
 let unsubscribeNotificacoes = null;
+let atividades = [];
+let atividadesRef = null;
+let unsubscribeAtividades = null;
 let distribuidoraSelecionada = "todas";
 let textoBuscaLista = "";
 let ordemSelecionada = "recentes";
@@ -59,6 +62,7 @@ const listaNotificacoesEl = document.getElementById("lista-notificacoes");
 
 const tabButtons = document.querySelectorAll(".tab-btn");
 const paineisTab = {
+  dashboard: document.getElementById("painel-dashboard"),
   consultar: document.getElementById("painel-consultar"),
   lista: document.getElementById("painel-lista"),
 };
@@ -80,6 +84,7 @@ function iniciarListenerSeries(db, uid) {
     series = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     atualizarFiltro();
     renderizar();
+    renderizarDashboard();
   });
 }
 
@@ -87,6 +92,33 @@ function pararListenerSeries() {
   if (unsubscribeSeries) unsubscribeSeries();
   seriesRef = null;
   series = [];
+}
+
+function iniciarListenerAtividades(db, uid) {
+  atividadesRef = db.collection("usuarios").doc(uid).collection("atividades");
+  unsubscribeAtividades = atividadesRef
+    .orderBy("criadoEm", "desc")
+    .limit(10)
+    .onSnapshot((snapshot) => {
+      atividades = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      renderizarDashboard();
+    });
+}
+
+function pararListenerAtividades() {
+  if (unsubscribeAtividades) unsubscribeAtividades();
+  atividadesRef = null;
+  atividades = [];
+}
+
+async function registrarAtividade(tipo, serieNome, descricao) {
+  if (!atividadesRef) return;
+  await atividadesRef.add({
+    tipo,
+    serieNome,
+    descricao,
+    criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+  });
 }
 
 function iniciarListenerNotificacoes(db, uid) {
@@ -148,23 +180,38 @@ function distribuidorasDaSerie(serie) {
 
 async function adicionarSerie(serie) {
   await seriesRef.add(serie);
+  await registrarAtividade("adicionada", serie.nome, "Série adicionada à lista");
 }
 
 async function removerSerie(id) {
+  const serie = series.find((s) => s.id === id);
   await seriesRef.doc(id).delete();
+  if (serie) await registrarAtividade("removida", serie.nome, "Série removida da lista");
 }
 
 async function mudarStatus(id, novoStatus) {
+  const serie = series.find((s) => s.id === id);
   await seriesRef.doc(id).update({ status: novoStatus });
+  if (serie) {
+    await registrarAtividade(
+      "status-alterado",
+      serie.nome,
+      `Status alterado para ${statusLabel[novoStatus]}`
+    );
+  }
 }
 
 async function alternarTemporadaAssistida(id, numeroTemporada) {
   const serie = series.find((s) => s.id === id);
   const atuais = serie.temporadasAssistidas || [];
-  const novas = atuais.includes(numeroTemporada)
-    ? atuais.filter((n) => n !== numeroTemporada)
-    : [...atuais, numeroTemporada].sort((a, b) => a - b);
+  const marcandoComoAssistida = !atuais.includes(numeroTemporada);
+  const novas = marcandoComoAssistida
+    ? [...atuais, numeroTemporada].sort((a, b) => a - b)
+    : atuais.filter((n) => n !== numeroTemporada);
   await seriesRef.doc(id).update({ temporadasAssistidas: novas });
+  if (marcandoComoAssistida) {
+    await registrarAtividade("temporada-concluida", serie.nome, `Temporada ${numeroTemporada} concluída`);
+  }
 }
 
 async function buscarSeriesTMDB(nome) {
@@ -197,11 +244,11 @@ function formatarDataTMDB(dataIso) {
 
 function statusProximaTemporada(detalhes) {
   if (detalhes.status === "Canceled") {
-    return { texto: "Cancelada", tipo: "cancelada", data: null };
+    return { texto: "Cancelada", tipo: "cancelada", data: null, temporada: null };
   }
 
   if (detalhes.status === "Ended") {
-    return { texto: "Encerrada, sem novas temporadas", tipo: "encerrada", data: null };
+    return { texto: "Encerrada, sem novas temporadas", tipo: "encerrada", data: null, temporada: null };
   }
 
   const proximo = detalhes.next_episode_to_air;
@@ -210,6 +257,7 @@ function statusProximaTemporada(detalhes) {
       texto: `Temporada ${proximo.season_number} estreia em ${formatarDataTMDB(proximo.air_date)}`,
       tipo: "confirmada",
       data: proximo.air_date,
+      temporada: proximo.season_number,
     };
   }
 
@@ -218,15 +266,16 @@ function statusProximaTemporada(detalhes) {
       texto: `Em exibição · próximo episódio em ${formatarDataTMDB(proximo.air_date)}`,
       tipo: "em-exibicao",
       data: proximo.air_date,
+      temporada: proximo.season_number,
     };
   }
 
   if (detalhes.status === "In Production" || detalhes.status === "Planned") {
-    return { texto: "Nova temporada confirmada (sem data ainda)", tipo: "sem-data", data: null };
+    return { texto: "Nova temporada confirmada (sem data ainda)", tipo: "sem-data", data: null, temporada: null };
   }
 
   if (detalhes.status === "Returning Series") {
-    return { texto: "Renovada, aguardando novidades", tipo: "sem-data", data: null };
+    return { texto: "Renovada, aguardando novidades", tipo: "sem-data", data: null, temporada: null };
   }
 
   return null;
@@ -773,6 +822,7 @@ form.addEventListener("submit", async (evento) => {
     proximaTemporadaTexto: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.texto : null,
     proximaTemporadaTipo: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.tipo : null,
     proximaTemporadaData,
+    proximaTemporadaNumero: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.temporada : null,
     proximaTemporadaAvisosDados: avisosIniciais,
     distribuidoras: [...distribuidorasEditaveis],
     status,
@@ -837,6 +887,7 @@ async function verificarRenovacoes({ silencioso } = {}) {
       const textoNovo = proximaTemporada ? proximaTemporada.texto : null;
       const tipoNovo = proximaTemporada ? proximaTemporada.tipo : null;
       const dataNova = proximaTemporada ? proximaTemporada.data : null;
+      const numeroNovo = proximaTemporada ? proximaTemporada.temporada : null;
 
       const jaTinhaInformacao = serie.proximaTemporadaTexto !== undefined && serie.proximaTemporadaTexto !== null;
       if (jaTinhaInformacao && textoNovo !== serie.proximaTemporadaTexto) {
@@ -853,6 +904,7 @@ async function verificarRenovacoes({ silencioso } = {}) {
         proximaTemporadaTexto: textoNovo,
         proximaTemporadaTipo: tipoNovo,
         proximaTemporadaData: dataNova,
+        proximaTemporadaNumero: numeroNovo,
         proximaTemporadaAvisosDados: avisosAtualizados,
       });
 
