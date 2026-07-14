@@ -38,7 +38,11 @@ function getTodayOverview(listaSeries) {
         releasesToday.push(serie);
       }
 
-      if (serie.proximaTemporadaTipo === "confirmada" && dias !== null && dias >= 0 && dias <= DIAS_LIMITE_ESTREIA) {
+      // Conta tanto estreia de temporada nova (tipo "confirmada") quanto
+      // episódio normal de uma temporada em exibição (tipo "em-exibicao") —
+      // qualquer lançamento com data conhecida nos próximos 30 dias, sem
+      // contar o que já apareceu em "lançamentos de hoje".
+      if (dias !== null && dias >= 1 && dias <= DIAS_LIMITE_ESTREIA) {
         upcoming.push(serie);
       }
     }
@@ -80,9 +84,13 @@ function getHighlightMessage(overview) {
   }
 
   if (overview.upcomingPremieres.nearest) {
-    const dias = diasAte(overview.upcomingPremieres.nearest.proximaTemporadaData);
+    const proxima = overview.upcomingPremieres.nearest;
+    const dias = diasAte(proxima.proximaTemporadaData);
     if (dias !== null && dias <= DIAS_LIMITE_MENSAGEM_ESTREIA) {
-      return `Faltam ${dias} dia${dias === 1 ? "" : "s"} para a nova temporada de ${overview.upcomingPremieres.nearest.nome}.`;
+      const rotulo = proxima.proximaTemporadaTipo === "confirmada"
+        ? `a nova temporada de ${proxima.nome}`
+        : `o próximo episódio de ${proxima.nome}`;
+      return `Faltam ${dias} dia${dias === 1 ? "" : "s"} para ${rotulo}.`;
     }
   }
 
@@ -104,11 +112,14 @@ function renderReleaseTodayItem(serie) {
 
 function renderUpcomingItem(serie) {
   const dias = diasAte(serie.proximaTemporadaData);
-  const rotuloDias = dias === 0 ? "hoje" : dias === 1 ? "amanhã" : `em ${dias} dias`;
+  const rotuloDias = dias === 1 ? "amanhã" : `em ${dias} dias`;
+  const rotuloTemporada = serie.proximaTemporadaTipo === "confirmada"
+    ? `Temporada ${serie.proximaTemporadaNumero}`
+    : "Novo episódio";
   return `
     <div class="today-item">
       <span>${escapeHtml(serie.nome)}</span>
-      <span class="today-item-meta">Temporada ${serie.proximaTemporadaNumero} · ${rotuloDias}</span>
+      <span class="today-item-meta">${rotuloTemporada} · ${rotuloDias}</span>
     </div>
   `;
 }
@@ -203,14 +214,14 @@ function TodayOverview() {
       icone: "🗓️",
       estado: overview.upcomingPremieres.count > 0 ? "informativo" : "neutro",
       titulo: overview.upcomingPremieres.count > 0
-        ? `${overview.upcomingPremieres.count} temporada${overview.upcomingPremieres.count === 1 ? "" : "s"} chegando`
-        : "Nenhuma estreia em 30 dias",
+        ? `${overview.upcomingPremieres.count} lançamento${overview.upcomingPremieres.count === 1 ? "" : "s"} chegando`
+        : "Nenhum lançamento em 30 dias",
       texto: overview.upcomingPremieres.nearest
-        ? `A mais próxima estreia em ${diasAte(overview.upcomingPremieres.nearest.proximaTemporadaData)} dias.`
-        : "Nenhuma estreia confirmada para os próximos 30 dias.",
+        ? `O mais próximo é em ${diasAte(overview.upcomingPremieres.nearest.proximaTemporadaData)} dias.`
+        : "Nenhum lançamento previsto para os próximos 30 dias.",
       itens: overview.upcomingPremieres.items,
       renderItem: renderUpcomingItem,
-      semDados: "Nenhuma estreia confirmada para os próximos 30 dias.",
+      semDados: "Nenhum lançamento previsto para os próximos 30 dias.",
     }),
     TodayOverviewCard({
       id: "paradas",
