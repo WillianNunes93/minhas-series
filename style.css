@@ -668,39 +668,6 @@ button:active {
   margin: 0 0 1rem;
 }
 
-.grupo-distribuidora {
-  margin-top: 1.8rem;
-}
-
-.grupo-distribuidora:first-child {
-  margin-top: 0.5rem;
-}
-
-.grupo-titulo {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 0 0 0.6rem 0.75rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--cor-borda);
-  border-left: 4px solid var(--cor-marca);
-}
-
-.grupo-titulo-texto {
-  flex: 1;
-}
-
-.grupo-contagem {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--cor-texto-fraco);
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 999px;
-  padding: 0.15rem 0.55rem;
-}
-
 .serie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -806,6 +773,13 @@ button:active {
   gap: 0.35rem;
 }
 
+.serie-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
 .serie-nome {
   font-weight: 600;
   font-size: 0.88rem;
@@ -814,6 +788,11 @@ button:active {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.contador-temporada {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .serie-meta {

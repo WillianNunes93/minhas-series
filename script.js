@@ -10,24 +10,6 @@ const statusLabel = {
   "abandonada": "Abandonada",
 };
 
-const coresDistribuidora = {
-  "Netflix": "#e50914",
-  "Prime Video": "#00a8e1",
-  "Amazon Prime Video": "#00a8e1",
-  "Apple TV Amazon Channel": "#00a8e1",
-  "Disney+": "#113ccf",
-  "Max": "#8b5cf6",
-  "Apple TV+": "#a2aaad",
-  "Apple TV": "#a2aaad",
-  "Paramount+": "#0064ff",
-  "Globoplay": "#ff6600",
-  "Star+": "#0f0f0f",
-};
-
-function corDistribuidora(nome) {
-  return coresDistribuidora[nome] || "#8b5cf6";
-}
-
 let series = [];
 let seriesRef = null;
 let unsubscribeSeries = null;
@@ -580,28 +562,28 @@ function renderizar() {
 
   seriesFiltradas = ordenarSeries(seriesFiltradas);
 
-  const grupos = {};
-  seriesFiltradas.forEach((s) => {
-    distribuidorasDaSerie(s).forEach((distribuidora) => {
-      if (!grupos[distribuidora]) grupos[distribuidora] = [];
-      grupos[distribuidora].push(s);
-    });
-  });
+  listaEl.innerHTML = `<div class="serie-grid">${seriesFiltradas.map(renderizarCard).join("")}</div>`;
+}
 
-  listaEl.innerHTML = Object.keys(grupos)
-    .sort()
-    .map((distribuidora) => `
-      <div class="grupo-distribuidora">
-        <div class="grupo-titulo" style="--cor-marca: ${corDistribuidora(distribuidora)}">
-          <span class="grupo-titulo-texto">${escapeHtml(distribuidora)}</span>
-          <span class="grupo-contagem">${grupos[distribuidora].length}</span>
-        </div>
-        <div class="serie-grid">
-          ${grupos[distribuidora].map(renderizarCard).join("")}
-        </div>
-      </div>
-    `)
-    .join("");
+const ROTULOS_SEM_CONTAGEM = {
+  cancelada: "Cancelada",
+  encerrada: "Encerrada",
+  "sem-data": "Sem data",
+};
+
+function renderizarContadorTemporada(serie) {
+  const tipo = serie.proximaTemporadaTipo;
+  if (!tipo) return "";
+
+  if (ROTULOS_SEM_CONTAGEM[tipo]) {
+    return `<span class="badge contador-temporada ${tipo}">${ROTULOS_SEM_CONTAGEM[tipo]}</span>`;
+  }
+
+  const dias = diasAte(serie.proximaTemporadaData);
+  if (dias === null) return "";
+
+  const texto = dias < 0 ? "Lançado" : dias === 0 ? "Hoje" : dias === 1 ? "1 dia" : `${dias} dias`;
+  return `<span class="badge contador-temporada ${tipo}" title="${escapeHtml(serie.proximaTemporadaTexto || "")}">${texto}</span>`;
 }
 
 function renderizarCard(serie) {
@@ -615,9 +597,7 @@ function renderizarCard(serie) {
   const cancelada = serie.cancelada
     ? `<span class="tag-cancelada">Cancelada</span>`
     : "";
-  const proximaTemporada = serie.proximaTemporadaTexto
-    ? `<span class="badge ${serie.proximaTemporadaTipo || ""}">${escapeHtml(serie.proximaTemporadaTexto)}</span>`
-    : "";
+  const contadorTemporada = renderizarContadorTemporada(serie);
   const trailer = serie.trailerUrl
     ? `<a class="icon-btn" href="${serie.trailerUrl}" target="_blank" rel="noopener" title="Assistir trailer" onclick="event.stopPropagation()">▶</a>`
     : "";
@@ -653,7 +633,10 @@ function renderizarCard(serie) {
         </div>
       </div>
       <div class="serie-info">
-        <span class="serie-nome">${escapeHtml(serie.nome)}</span>
+        <div class="serie-cabecalho">
+          <span class="serie-nome">${escapeHtml(serie.nome)}</span>
+          ${contadorTemporada}
+        </div>
         <span class="serie-meta">
           ${seletorStatus}
         </span>
@@ -663,7 +646,6 @@ function renderizarCard(serie) {
         <span class="serie-meta">
           ${linhaNota}
         </span>
-        ${proximaTemporada ? `<span class="serie-meta">${proximaTemporada}</span>` : ""}
         ${pillsTemporadas}
       </div>
     </div>
