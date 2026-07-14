@@ -56,10 +56,14 @@ auth.onAuthStateChanged(async (usuario) => {
     usuarioEmailEl.textContent = usuario.email;
     document.getElementById("link-admin").hidden = !souAdmin;
     iniciarListenerSeries(db, usuario.uid);
+    iniciarListenerNotificacoes(db, usuario.uid);
+
+    setTimeout(() => verificarRenovacoesAutomaticamente(), 3000);
   } else {
     telaLoginEl.hidden = false;
     appContainerEl.hidden = true;
     pararListenerSeries();
+    pararListenerNotificacoes();
   }
 });
 
