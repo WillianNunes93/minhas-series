@@ -1687,6 +1687,8 @@ button:active {
 .episodios-acoes {
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   margin-bottom: 0.7rem;
 }
 
