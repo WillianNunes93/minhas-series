@@ -66,6 +66,7 @@ const paineisTab = {
   dashboard: document.getElementById("painel-dashboard"),
   consultar: document.getElementById("painel-consultar"),
   lista: document.getElementById("painel-lista"),
+  timeline: document.getElementById("painel-timeline"),
 };
 
 function mudarTab(nomeTab) {
@@ -88,6 +89,7 @@ function iniciarListenerSeries(db, uid) {
     renderizar();
     renderizarDashboard();
     TodayOverview();
+    TimelinePage();
   });
 }
 

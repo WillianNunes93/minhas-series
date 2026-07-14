@@ -57,6 +57,7 @@
         <button type="button" class="tab-btn ativa" data-tab="dashboard">📊 Dashboard</button>
         <button type="button" class="tab-btn" data-tab="consultar">🔍 Consultar</button>
         <button type="button" class="tab-btn" data-tab="lista">📋 Minha Lista</button>
+        <button type="button" class="tab-btn" data-tab="timeline">🗓️ Timeline</button>
       </nav>
 
       <section class="painel-tab painel-dashboard" id="painel-dashboard">
@@ -195,6 +196,12 @@
 
         <div id="lista-series"></div>
       </section>
+
+      <section class="form-section painel-tab" id="painel-timeline" hidden>
+        <h2>Timeline</h2>
+        <p class="timeline-subtitulo">Acompanhe as próximas temporadas das suas séries.</p>
+        <div id="timeline-conteudo"></div>
+      </section>
     </main>
   </div>
 
@@ -206,6 +213,7 @@
   <script src="script.js"></script>
   <script src="dashboard.js"></script>
   <script src="today-overview.js"></script>
+  <script src="timeline.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>
