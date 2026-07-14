@@ -557,6 +557,19 @@ button:active {
   padding: 0.5rem 1rem;
 }
 
+.lista-controles button {
+  width: auto;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.status-atualizacao {
+  font-size: 0.8rem;
+  color: var(--cor-texto-fraco);
+  padding: 0.5rem 0 0;
+}
+
 .continuar-secao {
   margin-bottom: 1.8rem;
   padding-bottom: 1.5rem;
@@ -758,6 +771,10 @@ button:active {
 .badge.assistindo { color: #3498db; border-color: rgba(52, 152, 219, 0.4); }
 .badge.completa { color: #2ecc71; border-color: rgba(46, 204, 113, 0.4); }
 .badge.cancelada { color: #e74c3c; border-color: #e74c3c; }
+.badge.confirmada { color: #2ecc71; border-color: rgba(46, 204, 113, 0.4); }
+.badge.em-exibicao { color: #8b5cf6; border-color: rgba(139, 92, 246, 0.4); }
+.badge.sem-data { color: #3498db; border-color: rgba(52, 152, 219, 0.4); }
+.badge.encerrada { color: var(--cor-texto-fraco); }
 
 .vazio {
   color: var(--cor-texto-fraco);
