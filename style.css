@@ -1582,3 +1582,150 @@ button:active {
     margin-left: calc(52px + 0.8rem);
   }
 }
+
+.btn-episodios {
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.78rem;
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-fraco);
+  box-shadow: none;
+}
+
+.btn-episodios:hover {
+  border-color: var(--cor-destaque);
+  color: var(--cor-texto);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 100;
+}
+
+.modal-conteudo {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, var(--cor-card), var(--cor-card-alt));
+  border: 1px solid var(--cor-borda);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+}
+
+.modal-fechar {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+  box-shadow: none;
+}
+
+.modal-fechar:hover {
+  border-color: var(--cor-destaque);
+  background: rgba(0, 0, 0, 0.25);
+  transform: none;
+  box-shadow: none;
+}
+
+.temporada-seletor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.temporada-seletor-pill {
+  width: auto;
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-fraco);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.temporada-seletor-pill:hover {
+  border-color: var(--cor-destaque);
+  color: var(--cor-texto);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.temporada-seletor-pill.ativa {
+  background: linear-gradient(135deg, var(--cor-destaque), #6d28d9);
+  color: white;
+  border-color: transparent;
+}
+
+.temporada-seletor-pill.completa:not(.ativa) {
+  border-color: var(--cor-positivo);
+  color: var(--cor-positivo);
+}
+
+.episodio-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.episodio-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.55rem 0.7rem;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.episodio-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--cor-destaque);
+  flex-shrink: 0;
+}
+
+.progresso-contador {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.proximo-episodio-texto {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--cor-texto-fraco);
+}
+
+@media (max-width: 640px) {
+  .modal-conteudo {
+    padding: 1.25rem;
+  }
+}

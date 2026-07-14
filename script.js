@@ -90,6 +90,7 @@ function iniciarListenerSeries(db, uid) {
     renderizarDashboard();
     TodayOverview();
     TimelinePage();
+    atualizarModalEpisodios();
   });
 }
 
@@ -705,6 +706,9 @@ function renderizarCard(serie) {
   `;
 
   const pillsTemporadas = renderizarPillsTemporadas(serie);
+  const btnEpisodios = serie.temporadas
+    ? `<button type="button" class="btn-episodios" onclick="event.stopPropagation(); abrirModalEpisodios('${serie.id}')">📺 Episódios</button>`
+    : "";
 
   return `
     <div class="serie-card">
@@ -732,6 +736,7 @@ function renderizarCard(serie) {
           ${linhaNota}
         </span>
         ${pillsTemporadas}
+        ${btnEpisodios}
       </div>
     </div>
   `;
