@@ -571,19 +571,39 @@ const ROTULOS_SEM_CONTAGEM = {
   "sem-data": "Sem data",
 };
 
+const ROTULOS_CONTADOR = {
+  confirmada: "Estreia",
+  "em-exibicao": "Próx. episódio",
+  "sem-data": "Renovação",
+  encerrada: "Status",
+  cancelada: "Status",
+};
+
 function renderizarContadorTemporada(serie) {
   const tipo = serie.proximaTemporadaTipo;
   if (!tipo) return "";
 
+  const rotulo = ROTULOS_CONTADOR[tipo] || "Status";
+
   if (ROTULOS_SEM_CONTAGEM[tipo]) {
-    return `<span class="badge contador-temporada ${tipo}">${ROTULOS_SEM_CONTAGEM[tipo]}</span>`;
+    return `
+      <span class="contador-wrap">
+        <span class="contador-label">${rotulo}</span>
+        <span class="badge contador-temporada ${tipo}">${ROTULOS_SEM_CONTAGEM[tipo]}</span>
+      </span>
+    `;
   }
 
   const dias = diasAte(serie.proximaTemporadaData);
   if (dias === null) return "";
 
   const texto = dias < 0 ? "Lançado" : dias === 0 ? "Hoje" : dias === 1 ? "1 dia" : `${dias} dias`;
-  return `<span class="badge contador-temporada ${tipo}" title="${escapeHtml(serie.proximaTemporadaTexto || "")}">${texto}</span>`;
+  return `
+    <span class="contador-wrap">
+      <span class="contador-label">${rotulo}</span>
+      <span class="badge contador-temporada ${tipo}" title="${escapeHtml(serie.proximaTemporadaTexto || "")}">${texto}</span>
+    </span>
+  `;
 }
 
 function renderizarCard(serie) {
