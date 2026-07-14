@@ -54,9 +54,36 @@
 
     <main>
       <nav class="tabs">
+        <button type="button" class="tab-btn ativa" data-tab="dashboard">📊 Dashboard</button>
         <button type="button" class="tab-btn" data-tab="consultar">🔍 Consultar</button>
-        <button type="button" class="tab-btn ativa" data-tab="lista">📋 Minha Lista</button>
+        <button type="button" class="tab-btn" data-tab="lista">📋 Minha Lista</button>
       </nav>
+
+      <section class="painel-tab painel-dashboard" id="painel-dashboard">
+        <div class="dashboard-stats-grid" id="dashboard-stats"></div>
+
+        <div class="dashboard-grid">
+          <section class="dash-card">
+            <h2>🗓️ Próximos lançamentos</h2>
+            <div id="dashboard-lancamentos"></div>
+          </section>
+
+          <section class="dash-card">
+            <h2>▶️ Continuar assistindo</h2>
+            <div id="dashboard-continuar"></div>
+          </section>
+
+          <section class="dash-card">
+            <h2>📈 Resumo da biblioteca</h2>
+            <div id="dashboard-resumo" class="dashboard-resumo"></div>
+          </section>
+
+          <section class="dash-card">
+            <h2>🕒 Últimas atualizações</h2>
+            <div id="dashboard-atividades"></div>
+          </section>
+        </div>
+      </section>
 
       <section class="form-section painel-tab" id="painel-consultar" hidden>
         <h2>Consultar série</h2>
@@ -141,7 +168,7 @@
         </form>
       </section>
 
-      <section class="lista-section painel-tab" id="painel-lista">
+      <section class="lista-section painel-tab" id="painel-lista" hidden>
         <div class="lista-header">
           <h2>Minha lista</h2>
           <div class="lista-controles">
@@ -175,6 +202,7 @@
   <script src="firebase-config.js"></script>
   <script src="config.js"></script>
   <script src="script.js"></script>
+  <script src="dashboard.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>
