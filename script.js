@@ -215,11 +215,11 @@ function formatarDataTMDB(dataIso) {
 
 function statusProximaTemporada(detalhes) {
   if (detalhes.status === "Canceled") {
-    return { texto: "Cancelada", tipo: "cancelada" };
+    return { texto: "Cancelada", tipo: "cancelada", data: null };
   }
 
   if (detalhes.status === "Ended") {
-    return { texto: "Encerrada, sem novas temporadas", tipo: "encerrada" };
+    return { texto: "Encerrada, sem novas temporadas", tipo: "encerrada", data: null };
   }
 
   const proximo = detalhes.next_episode_to_air;
@@ -227,6 +227,7 @@ function statusProximaTemporada(detalhes) {
     return {
       texto: `Temporada ${proximo.season_number} estreia em ${formatarDataTMDB(proximo.air_date)}`,
       tipo: "confirmada",
+      data: proximo.air_date,
     };
   }
 
@@ -234,18 +235,44 @@ function statusProximaTemporada(detalhes) {
     return {
       texto: `Em exibição · próximo episódio em ${formatarDataTMDB(proximo.air_date)}`,
       tipo: "em-exibicao",
+      data: proximo.air_date,
     };
   }
 
   if (detalhes.status === "In Production" || detalhes.status === "Planned") {
-    return { texto: "Nova temporada confirmada (sem data ainda)", tipo: "sem-data" };
+    return { texto: "Nova temporada confirmada (sem data ainda)", tipo: "sem-data", data: null };
   }
 
   if (detalhes.status === "Returning Series") {
-    return { texto: "Renovada, aguardando novidades", tipo: "sem-data" };
+    return { texto: "Renovada, aguardando novidades", tipo: "sem-data", data: null };
   }
 
   return null;
+}
+
+const LIMIARES_AVISO_DIAS = [30, 15, 7, 1];
+
+function diasAte(dataIso) {
+  if (!dataIso) return null;
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const alvo = new Date(`${dataIso}T00:00:00`);
+  return Math.round((alvo - hoje) / (1000 * 60 * 60 * 24));
+}
+
+async function calcularAvisosDeData(serie, dataAlvo, avisosBase) {
+  if (!dataAlvo) return [];
+
+  const dias = diasAte(dataAlvo);
+  if (dias === null || dias < 0) return avisosBase;
+
+  const devidos = LIMIARES_AVISO_DIAS.filter((limite) => dias <= limite && !avisosBase.includes(limite));
+  if (devidos.length === 0) return avisosBase;
+
+  const rotuloDias = dias === 0 ? "hoje" : dias === 1 ? "amanhã" : `em ${dias} dias`;
+  await criarNotificacao(`${serie.nome}: lançamento ${rotuloDias} (${formatarDataTMDB(dataAlvo)})`);
+
+  return [...avisosBase, ...devidos];
 }
 
 async function buscarTrailerTMDB(tmdbId) {
@@ -730,6 +757,9 @@ form.addEventListener("submit", async (evento) => {
   const notaInput = document.getElementById("nota").value;
   const nota = notaInput === "" ? null : Number(notaInput);
 
+  const proximaTemporadaData = serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.data : null;
+  const avisosIniciais = await calcularAvisosDeData({ nome: serieSelecionada.nome }, proximaTemporadaData, []);
+
   await adicionarSerie({
     nome: serieSelecionada.nome,
     poster: serieSelecionada.poster,
@@ -740,6 +770,8 @@ form.addEventListener("submit", async (evento) => {
     trailerUrl: serieSelecionada.trailerUrl || null,
     proximaTemporadaTexto: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.texto : null,
     proximaTemporadaTipo: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.tipo : null,
+    proximaTemporadaData,
+    proximaTemporadaAvisosDados: avisosIniciais,
     distribuidoras: [...distribuidorasEditaveis],
     status,
     nota,
@@ -802,17 +834,24 @@ async function verificarRenovacoes({ silencioso } = {}) {
       const proximaTemporada = statusProximaTemporada(detalhes);
       const textoNovo = proximaTemporada ? proximaTemporada.texto : null;
       const tipoNovo = proximaTemporada ? proximaTemporada.tipo : null;
+      const dataNova = proximaTemporada ? proximaTemporada.data : null;
 
       const jaTinhaInformacao = serie.proximaTemporadaTexto !== undefined && serie.proximaTemporadaTexto !== null;
       if (jaTinhaInformacao && textoNovo !== serie.proximaTemporadaTexto) {
         await criarNotificacao(`${serie.nome}: ${textoNovo || "status de renovação atualizado"}`);
       }
 
+      const dataAnterior = serie.proximaTemporadaData || null;
+      const avisosBase = dataNova !== dataAnterior ? [] : (serie.proximaTemporadaAvisosDados || []);
+      const avisosAtualizados = await calcularAvisosDeData(serie, dataNova, avisosBase);
+
       await seriesRef.doc(serie.id).update({
         tmdbId,
         cancelada: detalhes.status === "Canceled",
         proximaTemporadaTexto: textoNovo,
         proximaTemporadaTipo: tipoNovo,
+        proximaTemporadaData: dataNova,
+        proximaTemporadaAvisosDados: avisosAtualizados,
       });
 
       verificadas += 1;
