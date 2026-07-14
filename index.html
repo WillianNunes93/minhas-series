@@ -58,6 +58,7 @@
         <button type="button" class="tab-btn" data-tab="consultar">🔍 Consultar</button>
         <button type="button" class="tab-btn" data-tab="lista">📋 Minha Lista</button>
         <button type="button" class="tab-btn" data-tab="timeline">🗓️ Timeline</button>
+        <button type="button" class="tab-btn" data-tab="estatisticas">📈 Estatísticas</button>
       </nav>
 
       <section class="painel-tab painel-dashboard" id="painel-dashboard">
@@ -202,6 +203,12 @@
         <p class="timeline-subtitulo">Acompanhe as próximas temporadas das suas séries.</p>
         <div id="timeline-conteudo"></div>
       </section>
+
+      <section class="form-section painel-tab" id="painel-estatisticas" hidden>
+        <h2>Estatísticas</h2>
+        <p class="timeline-subtitulo">Alguns números da sua biblioteca.</p>
+        <div id="estatisticas-conteudo"></div>
+      </section>
     </main>
 
     <div id="modal-episodios" class="modal-overlay" hidden>
@@ -222,6 +229,7 @@
   <script src="dashboard.js"></script>
   <script src="today-overview.js"></script>
   <script src="timeline.js"></script>
+  <script src="estatisticas.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>
