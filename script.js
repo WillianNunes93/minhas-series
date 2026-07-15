@@ -187,6 +187,33 @@ function distribuidorasDaSerie(serie) {
   return serie.distribuidora ? [serie.distribuidora] : ["Outro"];
 }
 
+// Sem logos oficiais das distribuidoras (evita baixar imagens externas e
+// reproduzir marcas registradas). Em vez disso, um selo colorido com a
+// sigla do serviço funciona como um pequeno "ícone" reconhecível.
+const SELOS_DISTRIBUIDORA = [
+  { padrao: /netflix/i, sigla: "N", cor: "#e50914" },
+  { padrao: /prime ?video|amazon/i, sigla: "P", cor: "#00a8e1" },
+  { padrao: /disney/i, sigla: "D+", cor: "#113ccf" },
+  { padrao: /max|hbo/i, sigla: "M", cor: "#002be7" },
+  { padrao: /apple/i, sigla: "TV", cor: "#333333" },
+  { padrao: /paramount/i, sigla: "P+", cor: "#0064ff" },
+  { padrao: /globoplay|globo/i, sigla: "G", cor: "#e60034" },
+  { padrao: /star\+?/i, sigla: "S+", cor: "#0d0d0d" },
+];
+
+function seloDistribuidora(nome) {
+  const encontrado = SELOS_DISTRIBUIDORA.find((s) => s.padrao.test(nome));
+  const sigla = encontrado ? encontrado.sigla : nome.slice(0, 1).toUpperCase();
+  const cor = encontrado ? encontrado.cor : "#5b5f73";
+  return `<span class="selo-distribuidora" style="background:${cor}" title="${escapeHtml(nome)}">${sigla}</span>`;
+}
+
+function renderizarSelosDistribuidoras(serie) {
+  const nomes = distribuidorasDaSerie(serie);
+  if (nomes.length === 0) return "";
+  return `<div class="distribuidoras-selo-linha">${nomes.map(seloDistribuidora).join("")}</div>`;
+}
+
 async function adicionarSerie(serie) {
   await seriesRef.add({ ...serie, progressUpdatedAt: firebase.firestore.FieldValue.serverTimestamp() });
   await registrarAtividade("adicionada", serie.nome, "Série adicionada à lista");
@@ -728,6 +755,7 @@ function renderizarCard(serie) {
           <span class="serie-nome">${escapeHtml(serie.nome)}</span>
           ${contadorTemporada}
         </div>
+        ${renderizarSelosDistribuidoras(serie)}
         <span class="serie-meta">
           ${seletorStatus}
         </span>
