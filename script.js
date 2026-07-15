@@ -1,6 +1,7 @@
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w342";
 const TMDB_BACKDROP = "https://image.tmdb.org/t/p/w780";
+const TMDB_LOGO = "https://image.tmdb.org/t/p/w92";
 
 const statusLabel = {
   "quero-assistir": "Quero assistir",
@@ -187,9 +188,9 @@ function distribuidorasDaSerie(serie) {
   return serie.distribuidora ? [serie.distribuidora] : ["Outro"];
 }
 
-// Sem logos oficiais das distribuidoras (evita baixar imagens externas e
-// reproduzir marcas registradas). Em vez disso, um selo colorido com a
-// sigla do serviço funciona como um pequeno "ícone" reconhecível.
+// Fallback para quando não temos o logo oficial (distribuidora adicionada
+// manualmente, ou série salva antes desta funcionalidade existir): um
+// selo colorido com a sigla do serviço, sem depender de nenhuma imagem.
 const SELOS_DISTRIBUIDORA = [
   { padrao: /netflix/i, sigla: "N", cor: "#e50914" },
   { padrao: /prime ?video|amazon/i, sigla: "P", cor: "#00a8e1" },
@@ -201,17 +202,25 @@ const SELOS_DISTRIBUIDORA = [
   { padrao: /star\+?/i, sigla: "S+", cor: "#0d0d0d" },
 ];
 
-function seloDistribuidora(nome) {
+function seloDistribuidoraFallback(nome) {
   const encontrado = SELOS_DISTRIBUIDORA.find((s) => s.padrao.test(nome));
   const sigla = encontrado ? encontrado.sigla : nome.slice(0, 1).toUpperCase();
   const cor = encontrado ? encontrado.cor : "#5b5f73";
   return `<span class="selo-distribuidora" style="background:${cor}" title="${escapeHtml(nome)}">${sigla}</span>`;
 }
 
+function seloDistribuidora(nome, logoUrl) {
+  if (logoUrl) {
+    return `<img class="selo-distribuidora-logo" src="${logoUrl}" alt="${escapeHtml(nome)}" title="${escapeHtml(nome)}">`;
+  }
+  return seloDistribuidoraFallback(nome);
+}
+
 function renderizarSelosDistribuidoras(serie) {
   const nomes = distribuidorasDaSerie(serie);
   if (nomes.length === 0) return "";
-  return `<div class="distribuidoras-selo-linha">${nomes.map(seloDistribuidora).join("")}</div>`;
+  const logos = serie.distribuidorasLogos || {};
+  return `<div class="distribuidoras-selo-linha">${nomes.map((nome) => seloDistribuidora(nome, logos[nome])).join("")}</div>`;
 }
 
 async function adicionarSerie(serie) {
@@ -276,7 +285,7 @@ async function buscarDetalhesTMDB(tmdbId) {
 }
 
 async function buscarStatusTMDB(tmdbId) {
-  const url = `${TMDB_BASE}/tv/${tmdbId}?api_key=${TMDB_API_KEY}&language=pt-BR`;
+  const url = `${TMDB_BASE}/tv/${tmdbId}?api_key=${TMDB_API_KEY}&language=pt-BR&append_to_response=watch/providers`;
   const resposta = await fetch(url);
   if (!resposta.ok) return null;
   return resposta.json();
@@ -372,6 +381,23 @@ function distribuidorasDosDetalhes(detalhes) {
   return [...new Set(nomes)];
 }
 
+// Logos oficiais das distribuidoras, direto do TMDB (mesmo CDN já usado
+// para pôsteres/backdrops) — evita baixar/hospedar arquivos de marca
+// registrada no próprio repositório.
+function logosDistribuidorasDosDetalhes(detalhes) {
+  const brasil = detalhes["watch/providers"] && detalhes["watch/providers"].results && detalhes["watch/providers"].results.BR;
+  if (!brasil || !brasil.flatrate) return {};
+
+  const logos = {};
+  brasil.flatrate.forEach((p) => {
+    const nome = normalizarDistribuidora(p.provider_name);
+    if (p.logo_path && !logos[nome]) {
+      logos[nome] = `${TMDB_LOGO}${p.logo_path}`;
+    }
+  });
+  return logos;
+}
+
 function normalizarDistribuidora(nome) {
   return nome
     .replace(/\s*(Standard|Basic|Premium)?\s*with Ads.*/i, "")
@@ -441,6 +467,7 @@ async function selecionarResultado(resultado) {
     proximaTemporada: statusProximaTemporada(detalhes),
     trailerUrl,
     recomendacoes,
+    distribuidorasLogos: logosDistribuidorasDosDetalhes(detalhes),
   };
   distribuidorasEditaveis = distribuidoras;
 
@@ -876,6 +903,7 @@ form.addEventListener("submit", async (evento) => {
     proximaTemporadaNumero: serieSelecionada.proximaTemporada ? serieSelecionada.proximaTemporada.temporada : null,
     proximaTemporadaAvisosDados: avisosIniciais,
     distribuidoras: [...distribuidorasEditaveis],
+    distribuidorasLogos: serieSelecionada.distribuidorasLogos || {},
     status,
     nota,
     criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
@@ -957,6 +985,7 @@ async function verificarRenovacoes({ silencioso } = {}) {
         proximaTemporadaData: dataNova,
         proximaTemporadaNumero: numeroNovo,
         proximaTemporadaAvisosDados: avisosAtualizados,
+        distribuidorasLogos: { ...(serie.distribuidorasLogos || {}), ...logosDistribuidorasDosDetalhes(detalhes) },
       });
 
       verificadas += 1;
