@@ -2033,3 +2033,48 @@ button:active {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.discovery-distribuidoras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.discovery-distribuidora-opcao {
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem 0.4rem 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  box-shadow: none;
+}
+
+.discovery-distribuidora-opcao:hover {
+  border-color: var(--cor-destaque);
+  background: rgba(0, 0, 0, 0.22);
+  transform: none;
+  box-shadow: none;
+}
+
+.discovery-distribuidora-opcao.ativa {
+  background: linear-gradient(135deg, var(--cor-destaque), #6d28d9);
+  border-color: transparent;
+  color: white;
+}
+
+.discovery-distribuidora-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: white;
+  padding: 2px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
