@@ -117,6 +117,11 @@ function renderModalPerfil() {
       <p class="serie-meta">Usadas para o filtro "⭐ Minhas distribuidoras" na Minha Lista.</p>
       ${DistribuidorasFavoritasSeletor(favoritas)}
     </div>
+
+    <div class="campo">
+      ${souAdmin ? '<a href="admin.html" class="link-acao-conta">Painel admin</a>' : ""}
+      <button type="button" id="btn-sair" class="btn-secundario">Sair</button>
+    </div>
   `;
 
   mensagemSenhaEl = document.getElementById("mensagem-senha");
@@ -207,6 +212,12 @@ modalPerfilCorpoEl.addEventListener("click", (evento) => {
 
   if (evento.target.id === "btn-trocar-senha") {
     trocarSenha();
+    return;
+  }
+
+  if (evento.target.id === "btn-sair") {
+    fecharModalPerfil();
+    auth.signOut();
     return;
   }
 

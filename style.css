@@ -135,32 +135,6 @@ header p {
   flex-shrink: 0;
 }
 
-.usuario-barra #btn-sair {
-  width: auto;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.8rem;
-  background: transparent;
-  border: 1px solid var(--cor-borda);
-  box-shadow: none;
-}
-
-.usuario-barra #btn-sair:hover {
-  border-color: var(--cor-destaque);
-  background: transparent;
-  transform: none;
-  box-shadow: none;
-}
-
-.usuario-barra #link-admin {
-  color: var(--cor-destaque);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.usuario-barra #link-admin:hover {
-  text-decoration: underline;
-}
-
 .notificacoes-wrap {
   position: relative;
 }
@@ -2183,4 +2157,25 @@ button:active {
 .discovery-filtros-linha .campo {
   flex: 1;
   min-width: 160px;
+}
+
+.link-acao-conta {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-destaque);
+  margin-bottom: 0.6rem;
+}
+
+.link-acao-conta:hover {
+  border-color: var(--cor-destaque);
+  background: rgba(139, 92, 246, 0.1);
 }

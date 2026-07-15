@@ -14,6 +14,11 @@ function formatarData(timestamp) {
   return timestamp.toDate().toLocaleDateString("pt-BR");
 }
 
+function formatarDataHora(timestamp) {
+  if (!timestamp) return "Nunca acessou";
+  return timestamp.toDate().toLocaleString("pt-BR");
+}
+
 async function carregarDadosAdmin() {
   const [usuariosSnap, seriesSnap] = await Promise.all([
     db.collection("usuarios").get(),
@@ -80,6 +85,7 @@ function renderizarUsuarios(usuariosSnap, seriesPorUsuario) {
               Cadastrado em ${formatarData(dados.criadoEm)} · ${seriesPorUsuario[doc.id] || 0} séries
               <span class="badge ${bloqueado ? "cancelada" : "completa"}">${bloqueado ? "Bloqueado" : "Ativo"}</span>
             </span>
+            <span class="serie-meta">Último acesso: ${formatarDataHora(dados.ultimoAcesso)}</span>
           </div>
           <button
             type="button"
