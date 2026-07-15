@@ -82,9 +82,12 @@ auth.onAuthStateChanged(async (usuario) => {
 
     souAdmin = usuario.email === ADMIN_EMAIL;
 
+    db.collection("usuarios").doc(usuario.uid).update({
+      ultimoAcesso: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
     telaLoginEl.hidden = true;
     appContainerEl.hidden = false;
-    document.getElementById("link-admin").hidden = !souAdmin;
     iniciarListenerSeries(db, usuario.uid);
     iniciarListenerNotificacoes(db, usuario.uid);
     iniciarListenerAtividades(db, usuario.uid);
@@ -141,8 +144,4 @@ btnAuthEntrarEl.addEventListener("click", async () => {
 btnAuthCadastrarEl.addEventListener("click", () => {
   modoCadastro = !modoCadastro;
   atualizarModoAuth();
-});
-
-document.getElementById("btn-sair").addEventListener("click", () => {
-  auth.signOut();
 });
