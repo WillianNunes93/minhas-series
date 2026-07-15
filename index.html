@@ -38,7 +38,10 @@
 
   <div id="app-container" hidden>
     <div class="usuario-barra">
-      <span id="usuario-email"></span>
+      <button type="button" id="btn-perfil" class="btn-perfil-barra">
+        <span id="perfil-avatar-barra" class="perfil-avatar-barra">🙂</span>
+        <span id="perfil-nome-barra"></span>
+      </button>
       <a id="link-admin" href="admin.html" hidden>Painel admin</a>
       <div class="notificacoes-wrap">
         <button type="button" id="btn-notificacoes" class="btn-notificacoes">
@@ -218,6 +221,13 @@
       </div>
     </div>
 
+    <div id="modal-perfil" class="modal-overlay" hidden>
+      <div class="modal-conteudo">
+        <button type="button" class="modal-fechar" id="btn-fechar-perfil" title="Fechar">✕</button>
+        <div id="modal-perfil-corpo"></div>
+      </div>
+    </div>
+
     <footer class="rodape-tmdb">
       <p>Dados e imagens de séries, pôsteres e distribuidoras fornecidos por <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. Este produto usa a API do TMDB, mas não é endossado ou certificado pelo TMDB.</p>
     </footer>
@@ -234,6 +244,7 @@
   <script src="today-overview.js"></script>
   <script src="timeline.js"></script>
   <script src="estatisticas.js"></script>
+  <script src="perfil.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>
