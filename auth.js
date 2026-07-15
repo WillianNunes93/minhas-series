@@ -90,6 +90,7 @@ auth.onAuthStateChanged(async (usuario) => {
     iniciarListenerAtividades(db, usuario.uid);
     iniciarListenerPerfil(db, usuario.uid);
     iniciarListenersAmizade(db, usuario.uid);
+    iniciarListenerIndicacoes(db, usuario.uid);
 
     setTimeout(() => verificarRenovacoesAutomaticamente(), 3000);
   } else {
@@ -100,6 +101,7 @@ auth.onAuthStateChanged(async (usuario) => {
     pararListenerAtividades();
     pararListenerPerfil();
     pararListenersAmizade();
+    pararListenerIndicacoes();
   }
 });
 

@@ -801,6 +801,7 @@ function renderizarCard(serie) {
         <div class="serie-overlay">
           <button class="icon-btn ${serie.favorita ? "favorita-ativa" : ""}" onclick="event.stopPropagation(); alternarFavorita('${serie.id}')" title="${serie.favorita ? "Remover dos favoritos" : "Marcar como favorita"}">${serie.favorita ? "★" : "☆"}</button>
           ${trailer}
+          ${serie.tmdbId ? `<button class="icon-btn" onclick="event.stopPropagation(); abrirModalIndicar('${serie.id}')" title="Indicar para um amigo">🎁</button>` : ""}
           <button class="icon-btn" onclick="iniciarEdicaoNota('${serie.id}')" title="Editar nota">✏️</button>
           <button class="icon-btn" onclick="removerSerie('${serie.id}')" title="Remover">✕</button>
         </div>
