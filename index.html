@@ -238,6 +238,7 @@
         </div>
         <div id="resultado-busca-amigo"></div>
 
+        <div id="indicacoes-recebidas-secao"></div>
         <div id="solicitacoes-recebidas-secao"></div>
         <div id="solicitacoes-enviadas-secao"></div>
         <div id="lista-amigos-secao"></div>
@@ -289,6 +290,13 @@
       </div>
     </div>
 
+    <div id="modal-indicar" class="modal-overlay" hidden>
+      <div class="modal-conteudo">
+        <button type="button" class="modal-fechar" id="btn-fechar-indicar" title="Fechar">✕</button>
+        <div id="modal-indicar-corpo"></div>
+      </div>
+    </div>
+
     <footer class="rodape-tmdb">
       <p>Dados e imagens de séries, pôsteres e distribuidoras fornecidos por <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. Este produto usa a API do TMDB, mas não é endossado ou certificado pelo TMDB.</p>
     </footer>
@@ -308,6 +316,7 @@
   <script src="perfil.js"></script>
   <script src="amigos.js"></script>
   <script src="discovery.js"></script>
+  <script src="indicacoes.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>
