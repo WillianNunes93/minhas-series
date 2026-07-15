@@ -80,8 +80,32 @@ function mudarTab(nomeTab) {
   });
 }
 
+const sidebarEl = document.getElementById("sidebar");
+const sidebarOverlayEl = document.getElementById("sidebar-overlay");
+const btnMenuMobileEl = document.getElementById("btn-menu-mobile");
+
+function abrirSidebar() {
+  sidebarEl.classList.add("aberta");
+  sidebarOverlayEl.hidden = false;
+}
+
+function fecharSidebar() {
+  sidebarEl.classList.remove("aberta");
+  sidebarOverlayEl.hidden = true;
+}
+
+btnMenuMobileEl.addEventListener("click", () => {
+  if (sidebarEl.classList.contains("aberta")) fecharSidebar();
+  else abrirSidebar();
+});
+
+sidebarOverlayEl.addEventListener("click", fecharSidebar);
+
 tabButtons.forEach((botao) => {
-  botao.addEventListener("click", () => mudarTab(botao.dataset.tab));
+  botao.addEventListener("click", () => {
+    mudarTab(botao.dataset.tab);
+    fecharSidebar();
+  });
 });
 
 function iniciarListenerSeries(db, uid) {

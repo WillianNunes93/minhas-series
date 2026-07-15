@@ -47,36 +47,41 @@
   </div>
 
   <div id="app-container" hidden>
-    <div class="usuario-barra">
-      <button type="button" id="btn-perfil" class="btn-perfil-barra">
-        <span id="perfil-avatar-barra" class="perfil-avatar-barra">🙂</span>
-        <span id="perfil-nome-barra"></span>
-      </button>
-      <a id="link-admin" href="admin.html" hidden>Painel admin</a>
-      <div class="notificacoes-wrap">
-        <button type="button" id="btn-notificacoes" class="btn-notificacoes">
-          🔔<span id="badge-notificacoes" class="notif-badge" hidden>0</span>
+    <button type="button" id="btn-menu-mobile" class="btn-menu-mobile" aria-label="Abrir menu">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+      <button type="button" class="tab-btn ativa" data-tab="dashboard">📊 Dashboard</button>
+      <button type="button" class="tab-btn" data-tab="consultar">🔍 Consultar</button>
+      <button type="button" class="tab-btn" data-tab="lista">📋 Minha Lista</button>
+      <button type="button" class="tab-btn" data-tab="timeline">🗓️ Timeline</button>
+      <button type="button" class="tab-btn" data-tab="estatisticas">📈 Estatísticas</button>
+      <button type="button" class="tab-btn" data-tab="amigos">👥 Amigos</button>
+      <button type="button" class="tab-btn" data-tab="discovery">🧭 Discovery</button>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+
+    <div class="conteudo-app">
+      <div class="usuario-barra">
+        <button type="button" id="btn-perfil" class="btn-perfil-barra">
+          <span id="perfil-avatar-barra" class="perfil-avatar-barra">🙂</span>
+          <span id="perfil-nome-barra"></span>
         </button>
-        <div id="painel-notificacoes" class="painel-notificacoes" hidden>
-          <p class="painel-notificacoes-titulo">Notificações</p>
-          <div id="lista-notificacoes"></div>
+        <a id="link-admin" href="admin.html" hidden>Painel admin</a>
+        <div class="notificacoes-wrap">
+          <button type="button" id="btn-notificacoes" class="btn-notificacoes">
+            🔔<span id="badge-notificacoes" class="notif-badge" hidden>0</span>
+          </button>
+          <div id="painel-notificacoes" class="painel-notificacoes" hidden>
+            <p class="painel-notificacoes-titulo">Notificações</p>
+            <div id="lista-notificacoes"></div>
+          </div>
         </div>
+        <button type="button" id="btn-sair">Sair</button>
       </div>
-      <button type="button" id="btn-sair">Sair</button>
-    </div>
 
-    <main>
-      <nav class="tabs">
-        <button type="button" class="tab-btn ativa" data-tab="dashboard">📊 Dashboard</button>
-        <button type="button" class="tab-btn" data-tab="consultar">🔍 Consultar</button>
-        <button type="button" class="tab-btn" data-tab="lista">📋 Minha Lista</button>
-        <button type="button" class="tab-btn" data-tab="timeline">🗓️ Timeline</button>
-        <button type="button" class="tab-btn" data-tab="estatisticas">📈 Estatísticas</button>
-        <button type="button" class="tab-btn" data-tab="amigos">👥 Amigos</button>
-        <button type="button" class="tab-btn" data-tab="discovery">🧭 Discovery</button>
-      </nav>
-
-      <section class="painel-tab painel-dashboard" id="painel-dashboard">
+      <main>
+        <section class="painel-tab painel-dashboard" id="painel-dashboard">
         <div class="today-overview" id="today-overview"></div>
 
         <div class="dashboard-stats-grid" id="dashboard-stats"></div>
@@ -274,7 +279,8 @@
 
         <div id="discovery-resultados"></div>
       </section>
-    </main>
+      </main>
+    </div>
 
     <div id="modal-episodios" class="modal-overlay" hidden>
       <div class="modal-conteudo">
