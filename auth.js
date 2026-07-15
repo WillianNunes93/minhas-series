@@ -7,8 +7,15 @@ let souAdmin = false;
 const telaLoginEl = document.getElementById("tela-login");
 const appContainerEl = document.getElementById("app-container");
 const authErroEl = document.getElementById("auth-erro");
+const authTituloEl = document.getElementById("auth-titulo");
 const authEmailEl = document.getElementById("auth-email");
 const authSenhaEl = document.getElementById("auth-senha");
+const authNomeEl = document.getElementById("auth-nome");
+const authConfirmarSenhaEl = document.getElementById("auth-confirmar-senha");
+const campoNomeUsuarioEl = document.getElementById("campo-nome-usuario");
+const campoConfirmarSenhaEl = document.getElementById("campo-confirmar-senha");
+const btnAuthEntrarEl = document.getElementById("btn-auth-entrar");
+const btnAuthCadastrarEl = document.getElementById("btn-auth-cadastrar");
 
 const mensagensErroAuth = {
   "auth/invalid-email": "E-mail inválido.",
@@ -24,6 +31,27 @@ function mostrarErroAuth(erro) {
   authErroEl.hidden = false;
 }
 
+function mostrarErroAuthTexto(texto) {
+  authErroEl.textContent = texto;
+  authErroEl.hidden = false;
+}
+
+// Guardado aqui (em vez de ser escrito direto pelo cadastro) para que só
+// garantirPerfilUsuario grave o documento inicial do perfil — evita uma
+// condição de corrida entre esse fluxo e o cadastro escrevendo ao mesmo tempo.
+let nomeCadastroPendente = null;
+
+let modoCadastro = false;
+
+function atualizarModoAuth() {
+  authTituloEl.textContent = modoCadastro ? "Criar conta" : "Entrar";
+  campoNomeUsuarioEl.hidden = !modoCadastro;
+  campoConfirmarSenhaEl.hidden = !modoCadastro;
+  btnAuthEntrarEl.textContent = modoCadastro ? "Criar conta" : "Entrar";
+  btnAuthCadastrarEl.textContent = modoCadastro ? "Já tenho conta" : "Criar conta";
+  authErroEl.hidden = true;
+}
+
 async function garantirPerfilUsuario(usuario) {
   const perfilRef = db.collection("usuarios").doc(usuario.uid);
   const perfil = await perfilRef.get();
@@ -32,10 +60,11 @@ async function garantirPerfilUsuario(usuario) {
       email: usuario.email,
       criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
       bloqueado: false,
-      nomeExibicao: usuario.email.split("@")[0],
+      nomeExibicao: nomeCadastroPendente || usuario.email.split("@")[0],
       avatar: AVATAR_PADRAO,
       distribuidorasFavoritas: [],
     });
+    nomeCadastroPendente = null;
     return false;
   }
   return perfil.data().bloqueado === true;
@@ -72,8 +101,32 @@ auth.onAuthStateChanged(async (usuario) => {
   }
 });
 
-document.getElementById("btn-auth-entrar").addEventListener("click", async () => {
+btnAuthEntrarEl.addEventListener("click", async () => {
   authErroEl.hidden = true;
+
+  if (modoCadastro) {
+    const nome = authNomeEl.value.trim();
+    const senha = authSenhaEl.value;
+
+    if (!nome) {
+      mostrarErroAuthTexto("Escolha um nome de usuário.");
+      return;
+    }
+    if (senha !== authConfirmarSenhaEl.value) {
+      mostrarErroAuthTexto("As senhas não coincidem.");
+      return;
+    }
+
+    nomeCadastroPendente = nome;
+    try {
+      await auth.createUserWithEmailAndPassword(authEmailEl.value.trim(), senha);
+    } catch (erro) {
+      nomeCadastroPendente = null;
+      mostrarErroAuth(erro);
+    }
+    return;
+  }
+
   try {
     await auth.signInWithEmailAndPassword(authEmailEl.value.trim(), authSenhaEl.value);
   } catch (erro) {
@@ -81,13 +134,9 @@ document.getElementById("btn-auth-entrar").addEventListener("click", async () =>
   }
 });
 
-document.getElementById("btn-auth-cadastrar").addEventListener("click", async () => {
-  authErroEl.hidden = true;
-  try {
-    await auth.createUserWithEmailAndPassword(authEmailEl.value.trim(), authSenhaEl.value);
-  } catch (erro) {
-    mostrarErroAuth(erro);
-  }
+btnAuthCadastrarEl.addEventListener("click", () => {
+  modoCadastro = !modoCadastro;
+  atualizarModoAuth();
 });
 
 document.getElementById("btn-sair").addEventListener("click", () => {
