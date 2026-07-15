@@ -1220,6 +1220,25 @@ button:active {
   border-radius: 999px;
 }
 
+.tag-favorita {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  background: rgba(10, 10, 15, 0.75);
+  color: #f1c40f;
+  font-size: 0.9rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn.favorita-ativa {
+  color: #f1c40f;
+}
+
 .serie-overlay {
   position: absolute;
   inset: 0;
@@ -1897,4 +1916,120 @@ button:active {
   height: 16px;
   accent-color: var(--cor-destaque);
   flex-shrink: 0;
+}
+
+.amigos-subtitulo {
+  margin: 1.5rem 0 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.amigo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.amigo-nome {
+  font-weight: 600;
+  font-size: 0.88rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.amigo-acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.amigo-item button {
+  width: auto;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.78rem;
+}
+
+.amigo-card {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.amigo-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.amigo-cabecalho .amigo-nome {
+  font-size: 0.95rem;
+}
+
+.amigo-cabecalho button {
+  width: auto;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.78rem;
+  margin-left: auto;
+}
+
+.amigo-secao-titulo {
+  margin: 0 0 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--cor-texto-fraco);
+}
+
+.amigo-serie-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+}
+
+.amigo-serie-linha:last-child {
+  margin-bottom: 0;
+}
+
+.amigo-serie-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 90px;
+}
+
+.amigo-serie-poster {
+  width: 90px;
+  height: 135px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--cor-borda);
+}
+
+.amigo-serie-poster img,
+.amigo-serie-poster .poster-vazio-grande {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  font-size: 1.4rem;
+}
+
+.amigo-serie-nome {
+  font-size: 0.72rem;
+  color: var(--cor-texto-fraco);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

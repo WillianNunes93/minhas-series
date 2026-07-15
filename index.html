@@ -72,6 +72,7 @@
         <button type="button" class="tab-btn" data-tab="lista">📋 Minha Lista</button>
         <button type="button" class="tab-btn" data-tab="timeline">🗓️ Timeline</button>
         <button type="button" class="tab-btn" data-tab="estatisticas">📈 Estatísticas</button>
+        <button type="button" class="tab-btn" data-tab="amigos">👥 Amigos</button>
       </nav>
 
       <section class="painel-tab painel-dashboard" id="painel-dashboard">
@@ -222,6 +223,24 @@
         <p class="timeline-subtitulo">Alguns números da sua biblioteca.</p>
         <div id="estatisticas-conteudo"></div>
       </section>
+
+      <section class="form-section painel-tab" id="painel-amigos" hidden>
+        <h2>Amigos</h2>
+        <p class="timeline-subtitulo">Adicione amigos e veja as séries favoritas e em andamento deles.</p>
+
+        <div class="campo">
+          <label for="busca-amigo">Buscar por e-mail ou nome de usuário</label>
+          <div class="busca-linha">
+            <input type="text" id="busca-amigo" placeholder="email@exemplo.com ou Nome de usuário">
+            <button type="button" id="btn-buscar-amigo">Buscar</button>
+          </div>
+        </div>
+        <div id="resultado-busca-amigo"></div>
+
+        <div id="solicitacoes-recebidas-secao"></div>
+        <div id="solicitacoes-enviadas-secao"></div>
+        <div id="lista-amigos-secao"></div>
+      </section>
     </main>
 
     <div id="modal-episodios" class="modal-overlay" hidden>
@@ -255,6 +274,7 @@
   <script src="timeline.js"></script>
   <script src="estatisticas.js"></script>
   <script src="perfil.js"></script>
+  <script src="amigos.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>

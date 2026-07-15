@@ -69,6 +69,7 @@ const paineisTab = {
   lista: document.getElementById("painel-lista"),
   timeline: document.getElementById("painel-timeline"),
   estatisticas: document.getElementById("painel-estatisticas"),
+  amigos: document.getElementById("painel-amigos"),
 };
 
 function mudarTab(nomeTab) {
@@ -232,6 +233,12 @@ async function removerSerie(id) {
   const serie = series.find((s) => s.id === id);
   await seriesRef.doc(id).delete();
   if (serie) await registrarAtividade("removida", serie.nome, "Série removida da lista");
+}
+
+async function alternarFavorita(id) {
+  const serie = series.find((s) => s.id === id);
+  if (!serie) return;
+  await seriesRef.doc(id).update({ favorita: !serie.favorita });
 }
 
 async function mudarStatus(id, novoStatus) {
@@ -789,7 +796,9 @@ function renderizarCard(serie) {
       <div class="serie-poster-wrap">
         ${poster}
         ${cancelada}
+        ${serie.favorita ? '<span class="tag-favorita">★</span>' : ""}
         <div class="serie-overlay">
+          <button class="icon-btn ${serie.favorita ? "favorita-ativa" : ""}" onclick="event.stopPropagation(); alternarFavorita('${serie.id}')" title="${serie.favorita ? "Remover dos favoritos" : "Marcar como favorita"}">${serie.favorita ? "★" : "☆"}</button>
           ${trailer}
           <button class="icon-btn" onclick="iniciarEdicaoNota('${serie.id}')" title="Editar nota">✏️</button>
           <button class="icon-btn" onclick="removerSerie('${serie.id}')" title="Remover">✕</button>
