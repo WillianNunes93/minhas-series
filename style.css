@@ -2078,3 +2078,14 @@ button:active {
   object-fit: contain;
   flex-shrink: 0;
 }
+
+.discovery-filtros-linha {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.discovery-filtros-linha .campo {
+  flex: 1;
+  min-width: 160px;
+}

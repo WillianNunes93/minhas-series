@@ -1,5 +1,7 @@
 const discoveryDistribuidorasEl = document.getElementById("discovery-distribuidoras");
 const discoveryMesEl = document.getElementById("discovery-mes");
+const discoveryCategoriaEl = document.getElementById("discovery-categoria");
+const discoveryOrdenarEl = document.getElementById("discovery-ordenar");
 const discoveryResultadosEl = document.getElementById("discovery-resultados");
 
 const MESES_LIMITE_DISCOVERY = 6;
@@ -7,7 +9,22 @@ const MESES_LIMITE_DISCOVERY = 6;
 let discoveryProvedores = null;
 let discoveryDistribuidoraSelecionada = null;
 let discoveryMesSelecionado = null;
+let discoveryCategoriaSelecionada = "todas";
+let discoveryOrdenacao = "data";
 let discoveryResultadosAtuais = [];
+
+async function carregarCategoriasDiscovery() {
+  const url = `${TMDB_BASE}/genre/tv/list?api_key=${TMDB_API_KEY}&language=pt-BR`;
+  const resposta = await fetch(url);
+  if (!resposta.ok) throw new Error("Falha ao buscar categorias");
+  const dados = await resposta.json();
+  const generos = dados.genres || [];
+
+  discoveryCategoriaEl.innerHTML = [
+    '<option value="todas">Todas as categorias</option>',
+    ...generos.map((g) => `<option value="${g.id}">${escapeHtml(g.name)}</option>`),
+  ].join("");
+}
 
 // Reaproveita os padrões de SELOS_DISTRIBUIDORA (script.js) para casar o
 // nome usado no app com o provedor real do TMDB e pegar o logo oficial.
@@ -81,8 +98,9 @@ function ultimoDiaDoMesISO(ano, mes) {
 // para achar a data real (last_episode_to_air / next_episode_to_air) —
 // descartamos o item se nenhuma data cair de fato no mês, em vez de
 // inventar uma data.
-async function buscarLancamentosDiscovery(providerId, inicio, fim) {
-  const url = `${TMDB_BASE}/discover/tv?api_key=${TMDB_API_KEY}&language=pt-BR&watch_region=BR&with_watch_providers=${providerId}&air_date.gte=${inicio}&air_date.lte=${fim}&sort_by=popularity.desc`;
+async function buscarLancamentosDiscovery(providerId, inicio, fim, categoriaId) {
+  const filtroCategoria = categoriaId && categoriaId !== "todas" ? `&with_genres=${categoriaId}` : "";
+  const url = `${TMDB_BASE}/discover/tv?api_key=${TMDB_API_KEY}&language=pt-BR&watch_region=BR&with_watch_providers=${providerId}&air_date.gte=${inicio}&air_date.lte=${fim}&sort_by=popularity.desc${filtroCategoria}`;
   const resposta = await fetch(url);
   if (!resposta.ok) throw new Error("Falha ao buscar lançamentos");
   const dados = await resposta.json();
@@ -110,9 +128,15 @@ async function buscarLancamentosDiscovery(providerId, inicio, fim) {
     })
   );
 
-  return comData
-    .filter((r) => r.dataRelevante)
-    .sort((a, b) => new Date(a.dataRelevante) - new Date(b.dataRelevante));
+  return comData.filter((r) => r.dataRelevante);
+}
+
+function ordenarResultadosDiscovery(lancamentos) {
+  const copia = [...lancamentos];
+  if (discoveryOrdenacao === "avaliacao") {
+    return copia.sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
+  }
+  return copia.sort((a, b) => new Date(a.dataRelevante) - new Date(b.dataRelevante));
 }
 
 function DiscoveryItem(r, index) {
@@ -154,8 +178,8 @@ async function buscarDiscovery() {
   const fim = ultimoDiaDoMesISO(ano, mes);
 
   try {
-    const lancamentos = await buscarLancamentosDiscovery(discoveryDistribuidoraSelecionada, inicio, fim);
-    renderizarResultadosDiscovery(lancamentos);
+    const lancamentos = await buscarLancamentosDiscovery(discoveryDistribuidoraSelecionada, inicio, fim, discoveryCategoriaSelecionada);
+    renderizarResultadosDiscovery(ordenarResultadosDiscovery(lancamentos));
   } catch (erro) {
     discoveryResultadosEl.innerHTML = '<p class="vazio">Não foi possível buscar agora. Tente novamente.</p>';
   }
@@ -177,6 +201,12 @@ async function iniciarDiscovery() {
   } catch (erro) {
     discoveryDistribuidorasEl.innerHTML = '<p class="vazio">Não foi possível carregar as distribuidoras. Tente novamente mais tarde.</p>';
   }
+
+  try {
+    await carregarCategoriasDiscovery();
+  } catch (erro) {
+    // Sem categorias não impede a busca, só perde o filtro — segue com "Todas as categorias".
+  }
 }
 
 discoveryDistribuidorasEl.addEventListener("click", (evento) => {
@@ -191,6 +221,18 @@ discoveryMesEl.addEventListener("change", () => {
   const [ano, mes] = discoveryMesEl.value.split("-").map(Number);
   discoveryMesSelecionado = { ano, mes };
   buscarDiscovery();
+});
+
+discoveryCategoriaEl.addEventListener("change", () => {
+  discoveryCategoriaSelecionada = discoveryCategoriaEl.value;
+  buscarDiscovery();
+});
+
+discoveryOrdenarEl.addEventListener("change", () => {
+  discoveryOrdenacao = discoveryOrdenarEl.value;
+  if (discoveryResultadosAtuais.length > 0) {
+    renderizarResultadosDiscovery(ordenarResultadosDiscovery(discoveryResultadosAtuais));
+  }
 });
 
 discoveryResultadosEl.addEventListener("click", (evento) => {
