@@ -73,6 +73,7 @@
         <button type="button" class="tab-btn" data-tab="timeline">🗓️ Timeline</button>
         <button type="button" class="tab-btn" data-tab="estatisticas">📈 Estatísticas</button>
         <button type="button" class="tab-btn" data-tab="amigos">👥 Amigos</button>
+        <button type="button" class="tab-btn" data-tab="discovery">🧭 Discovery</button>
       </nav>
 
       <section class="painel-tab painel-dashboard" id="painel-dashboard">
@@ -241,6 +242,20 @@
         <div id="solicitacoes-enviadas-secao"></div>
         <div id="lista-amigos-secao"></div>
       </section>
+
+      <section class="form-section painel-tab" id="painel-discovery" hidden>
+        <h2>Discovery</h2>
+        <p class="timeline-subtitulo">Descubra os lançamentos de séries previstos por distribuidora.</p>
+
+        <div id="discovery-distribuidoras" class="discovery-distribuidoras"></div>
+
+        <div class="campo">
+          <label for="discovery-mes">Mês</label>
+          <select id="discovery-mes"></select>
+        </div>
+
+        <div id="discovery-resultados"></div>
+      </section>
     </main>
 
     <div id="modal-episodios" class="modal-overlay" hidden>
@@ -275,6 +290,7 @@
   <script src="estatisticas.js"></script>
   <script src="perfil.js"></script>
   <script src="amigos.js"></script>
+  <script src="discovery.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>

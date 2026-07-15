@@ -70,6 +70,7 @@ const paineisTab = {
   timeline: document.getElementById("painel-timeline"),
   estatisticas: document.getElementById("painel-estatisticas"),
   amigos: document.getElementById("painel-amigos"),
+  discovery: document.getElementById("painel-discovery"),
 };
 
 function mudarTab(nomeTab) {
