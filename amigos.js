@@ -81,7 +81,10 @@ function atualizarListenersSeriesAmigos() {
   const uidsAtuais = new Set(amigosAceitos.map((a) => a.uid));
 
   Object.keys(listenersSeriesAmigos).forEach((uidAmigo) => {
-    if (!uidsAtuais.has(uidAmigo)) {
+    // Remove tanto quem deixou de ser amigo quanto listeners presos em erro
+    // (ex.: a amizade ainda não tinha sido aceita quando o listener foi
+    // criado) — assim eles são recriados e tentam de novo.
+    if (!uidsAtuais.has(uidAmigo) || listenersSeriesAmigos[uidAmigo].erro) {
       listenersSeriesAmigos[uidAmigo].unsubscribe();
       delete listenersSeriesAmigos[uidAmigo];
     }
