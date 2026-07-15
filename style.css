@@ -1268,6 +1268,34 @@ button:active {
   flex-shrink: 0;
 }
 
+.selo-distribuidora-logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: white;
+  padding: 2px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.rodape-tmdb {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2rem;
+  text-align: center;
+}
+
+.rodape-tmdb p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--cor-texto-fraco);
+}
+
+.rodape-tmdb a {
+  color: var(--cor-texto-fraco);
+  text-decoration: underline;
+}
+
 .contador-wrap {
   flex-shrink: 0;
   display: flex;
