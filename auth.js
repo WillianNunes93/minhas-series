@@ -6,7 +6,6 @@ let souAdmin = false;
 
 const telaLoginEl = document.getElementById("tela-login");
 const appContainerEl = document.getElementById("app-container");
-const usuarioEmailEl = document.getElementById("usuario-email");
 const authErroEl = document.getElementById("auth-erro");
 const authEmailEl = document.getElementById("auth-email");
 const authSenhaEl = document.getElementById("auth-senha");
@@ -33,6 +32,9 @@ async function garantirPerfilUsuario(usuario) {
       email: usuario.email,
       criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
       bloqueado: false,
+      nomeExibicao: usuario.email.split("@")[0],
+      avatar: AVATAR_PADRAO,
+      distribuidorasFavoritas: [],
     });
     return false;
   }
@@ -53,11 +55,11 @@ auth.onAuthStateChanged(async (usuario) => {
 
     telaLoginEl.hidden = true;
     appContainerEl.hidden = false;
-    usuarioEmailEl.textContent = usuario.email;
     document.getElementById("link-admin").hidden = !souAdmin;
     iniciarListenerSeries(db, usuario.uid);
     iniciarListenerNotificacoes(db, usuario.uid);
     iniciarListenerAtividades(db, usuario.uid);
+    iniciarListenerPerfil(db, usuario.uid);
 
     setTimeout(() => verificarRenovacoesAutomaticamente(), 3000);
   } else {
@@ -66,6 +68,7 @@ auth.onAuthStateChanged(async (usuario) => {
     pararListenerSeries();
     pararListenerNotificacoes();
     pararListenerAtividades();
+    pararListenerPerfil();
   }
 });
 

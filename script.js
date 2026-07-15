@@ -624,6 +624,15 @@ function atualizarFiltro() {
   const valorAtual = filtroEl.value;
 
   filtroEl.innerHTML = '<option value="todas">Todas as distribuidoras</option>';
+
+  const favoritas = (typeof perfilUsuario !== "undefined" && perfilUsuario && perfilUsuario.distribuidorasFavoritas) || [];
+  if (favoritas.length > 0) {
+    const opcaoFavoritas = document.createElement("option");
+    opcaoFavoritas.value = "favoritas";
+    opcaoFavoritas.textContent = "⭐ Minhas distribuidoras";
+    filtroEl.appendChild(opcaoFavoritas);
+  }
+
   distribuidoras.forEach((d) => {
     const option = document.createElement("option");
     option.value = d;
@@ -631,7 +640,7 @@ function atualizarFiltro() {
     filtroEl.appendChild(option);
   });
 
-  filtroEl.value = distribuidoras.includes(valorAtual) ? valorAtual : "todas";
+  filtroEl.value = distribuidoras.includes(valorAtual) || valorAtual === "favoritas" ? valorAtual : "todas";
 }
 
 function ordenarSeries(lista) {
@@ -664,13 +673,22 @@ function renderizarContinuarAssistindo() {
   continuarGridEl.innerHTML = ordenarSeries(assistindo).map(renderizarCard).join("");
 }
 
+function seriesFiltradasPorFavoritas() {
+  const favoritas = (perfilUsuario && perfilUsuario.distribuidorasFavoritas) || [];
+  return series.filter((s) => distribuidorasDaSerie(s).some((d) => favoritas.includes(d)));
+}
+
 function renderizar() {
   renderizarContinuarAssistindo();
 
-  let seriesFiltradas =
-    distribuidoraSelecionada === "todas"
-      ? series
-      : series.filter((s) => distribuidorasDaSerie(s).includes(distribuidoraSelecionada));
+  let seriesFiltradas;
+  if (distribuidoraSelecionada === "todas") {
+    seriesFiltradas = series;
+  } else if (distribuidoraSelecionada === "favoritas") {
+    seriesFiltradas = seriesFiltradasPorFavoritas();
+  } else {
+    seriesFiltradas = series.filter((s) => distribuidorasDaSerie(s).includes(distribuidoraSelecionada));
+  }
 
   const termoBusca = textoBuscaLista.trim().toLowerCase();
   if (termoBusca) {
