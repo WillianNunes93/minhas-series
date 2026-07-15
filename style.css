@@ -101,6 +101,36 @@ header p {
   font-size: 0.85rem;
 }
 
+.usuario-barra > button,
+.usuario-barra > a {
+  width: auto;
+}
+
+.usuario-barra > button:not(.btn-download-mobile):not(.btn-perfil-barra):not(.btn-notificacoes) {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+  background: transparent;
+  border: 1px solid var(--cor-borda);
+  box-shadow: none;
+}
+
+.usuario-barra > button:not(.btn-download-mobile):not(.btn-perfil-barra):not(.btn-notificacoes):hover {
+  border-color: var(--cor-destaque);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.usuario-barra > a:not(.btn-download-mobile) {
+  color: var(--cor-destaque);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.usuario-barra > a:not(.btn-download-mobile):hover {
+  text-decoration: underline;
+}
+
 .btn-perfil-barra {
   width: auto;
   display: flex;
@@ -2178,4 +2208,21 @@ button:active {
 .link-acao-conta:hover {
   border-color: var(--cor-destaque);
   background: rgba(139, 92, 246, 0.1);
+}
+
+.btn-download-mobile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, var(--cor-destaque), #6d28d9);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-download-mobile:hover {
+  background: linear-gradient(135deg, var(--cor-destaque-hover), #5b21b6);
 }
