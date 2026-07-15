@@ -19,6 +19,11 @@
     <div class="auth-card">
       <h2 id="auth-titulo">Entrar</h2>
 
+      <div class="campo" id="campo-nome-usuario" hidden>
+        <label for="auth-nome">Nome de usuário</label>
+        <input type="text" id="auth-nome" placeholder="Como quer ser chamado?">
+      </div>
+
       <div class="campo">
         <label for="auth-email">E-mail</label>
         <input type="email" id="auth-email" placeholder="voce@email.com">
@@ -27,6 +32,11 @@
       <div class="campo">
         <label for="auth-senha">Senha</label>
         <input type="password" id="auth-senha" placeholder="Mínimo 6 caracteres">
+      </div>
+
+      <div class="campo" id="campo-confirmar-senha" hidden>
+        <label for="auth-confirmar-senha">Confirmar senha</label>
+        <input type="password" id="auth-confirmar-senha" placeholder="Repita a senha">
       </div>
 
       <p id="auth-erro" class="vazio aviso-inline" hidden></p>
