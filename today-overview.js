@@ -125,10 +125,12 @@ function renderUpcomingItem(serie) {
 }
 
 function renderInactiveItem(serie) {
+  const assistidas = serie.temporadasAssistidas || [];
+  const temporadaAtual = assistidas.length > 0 ? Math.max(...assistidas) : 1;
   return `
     <div class="today-item">
       <span>${escapeHtml(serie.nome)} <span class="today-item-meta">parada há ${serie.diasParada} dias</span></span>
-      <button type="button" class="btn-continuar" onclick="event.stopPropagation(); mudarTab('lista')">Continuar</button>
+      <button type="button" class="btn-continuar" onclick="event.stopPropagation(); abrirModalEpisodios('${serie.id}', ${temporadaAtual})">Continuar</button>
     </div>
   `;
 }
