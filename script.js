@@ -101,6 +101,27 @@ btnMenuMobileEl.addEventListener("click", () => {
 
 sidebarOverlayEl.addEventListener("click", fecharSidebar);
 
+const btnAbrirFiltrosListaEl = document.getElementById("btn-abrir-filtros-lista");
+const listaFiltrosAvancadosEl = document.querySelector(".lista-filtros-avancados");
+const listaFiltrosOverlayEl = document.getElementById("lista-filtros-overlay");
+
+function abrirFiltrosLista() {
+  listaFiltrosAvancadosEl.classList.add("aberta");
+  listaFiltrosOverlayEl.hidden = false;
+}
+
+function fecharFiltrosLista() {
+  listaFiltrosAvancadosEl.classList.remove("aberta");
+  listaFiltrosOverlayEl.hidden = true;
+}
+
+btnAbrirFiltrosListaEl.addEventListener("click", () => {
+  if (listaFiltrosAvancadosEl.classList.contains("aberta")) fecharFiltrosLista();
+  else abrirFiltrosLista();
+});
+
+listaFiltrosOverlayEl.addEventListener("click", fecharFiltrosLista);
+
 tabButtons.forEach((botao) => {
   botao.addEventListener("click", () => {
     mudarTab(botao.dataset.tab);

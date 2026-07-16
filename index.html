@@ -226,18 +226,22 @@
           <h2>Minha lista</h2>
           <div class="lista-controles">
             <input type="text" id="busca-lista" placeholder="Buscar na sua lista...">
-            <select id="ordenar-lista">
-              <option value="recentes">Recentes primeiro</option>
-              <option value="nota">Maior nota</option>
-              <option value="alfabetica">Alfabética (A-Z)</option>
-            </select>
-            <select id="filtro-distribuidora">
-              <option value="todas">Todas as distribuidoras</option>
-            </select>
-            <button type="button" id="btn-atualizar-temporadas">🔄 Atualizar renovações</button>
+            <button type="button" id="btn-abrir-filtros-lista" class="btn-filtros-mobile">⚙️ Filtros</button>
+            <div class="lista-filtros-avancados">
+              <select id="ordenar-lista">
+                <option value="recentes">Recentes primeiro</option>
+                <option value="nota">Maior nota</option>
+                <option value="alfabetica">Alfabética (A-Z)</option>
+              </select>
+              <select id="filtro-distribuidora">
+                <option value="todas">Todas as distribuidoras</option>
+              </select>
+              <button type="button" id="btn-atualizar-temporadas">🔄 Atualizar renovações</button>
+            </div>
           </div>
         </div>
         <p id="status-atualizar-temporadas" class="status-atualizacao" hidden></p>
+        <div class="sheet-overlay" id="lista-filtros-overlay" hidden></div>
 
         <div id="continuar-assistindo-secao" class="continuar-secao" hidden>
           <p class="continuar-titulo">▶️ Continuar assistindo</p>

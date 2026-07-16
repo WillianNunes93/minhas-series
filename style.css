@@ -1353,6 +1353,16 @@ button:active {
   font-size: 0.85rem;
 }
 
+/* No desktop o wrapper é "invisível" pro layout — os filhos continuam
+   como itens flex diretos de .lista-controles, igual antes. */
+.lista-filtros-avancados {
+  display: contents;
+}
+
+.btn-filtros-mobile {
+  display: none;
+}
+
 .status-atualizacao {
   font-size: 0.8rem;
   color: var(--cor-texto-fraco);
@@ -1502,6 +1512,66 @@ button:active {
     height: 38px;
     font-size: 1.05rem;
   }
+
+  /* No mobile a ordenação, o filtro de distribuidora e o botão de
+     atualizar renovações saem da tela principal e viram um bottom sheet
+     aberto pelo botão "Filtros", em vez de empilhar tudo verticalmente. */
+  .btn-filtros-mobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .lista-filtros-avancados {
+    display: none;
+    flex-direction: column;
+    gap: 0.6rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 220;
+    background: linear-gradient(180deg, var(--cor-card), var(--cor-card-alt));
+    border-radius: 20px 20px 0 0;
+    padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    animation: subir-sheet 0.2s ease-out;
+  }
+
+  .lista-filtros-avancados.aberta {
+    display: flex;
+  }
+
+  .lista-filtros-avancados select,
+  .lista-filtros-avancados button {
+    width: 100%;
+  }
+
+  .sheet-overlay:not([hidden]) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 210;
+  }
+
+  /* Cards de resultado de busca viram um grid compacto de 2 colunas em vez
+     de um card gigante por linha — mais fácil comparar opções na tela. */
+  .resultados-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+  }
+
+  .resultado-sinopse {
+    display: none;
+  }
+
+  .resultado-info {
+    padding: 0.5rem 0.5rem 0.65rem;
+  }
+}
+
+.sheet-overlay {
+  display: none;
 }
 
 .serie-info {
@@ -2132,27 +2202,34 @@ button:active {
 
 .favoritas-lista {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .favorita-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  width: auto;
   font-size: 0.85rem;
-  padding: 0.4rem 0.6rem;
+  padding: 0.4rem 0.9rem;
   background: rgba(0, 0, 0, 0.22);
   border: 1px solid var(--cor-borda);
-  border-radius: 8px;
+  border-radius: 999px;
   cursor: pointer;
+  color: var(--cor-texto);
+  box-shadow: none;
 }
 
-.favorita-item input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--cor-destaque);
-  flex-shrink: 0;
+.favorita-item:hover {
+  border-color: var(--cor-destaque);
+  background: rgba(0, 0, 0, 0.22);
+  transform: none;
+  box-shadow: none;
+}
+
+.favorita-item.ativa {
+  background: linear-gradient(135deg, var(--cor-destaque), #6d28d9);
+  border-color: transparent;
+  color: white;
 }
 
 .amigos-subtitulo {

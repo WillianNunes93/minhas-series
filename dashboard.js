@@ -143,7 +143,7 @@ function ContinueWatching(listaSeries) {
             <span class="continuar-meta">Temporada ${temporadaAtual}${serie.temporadas ? ` de ${serie.temporadas}` : ""}</span>
             <span class="continuar-meta">${ultimaAssistida ? `Última temporada assistida: ${ultimaAssistida}` : "Nenhuma temporada marcada ainda"}</span>
           </div>
-          <button type="button" class="btn-continuar" onclick="mudarTab('lista')">Continuar</button>
+          <button type="button" class="btn-continuar" onclick="abrirModalEpisodios('${serie.id}', ${temporadaAtual})">Continuar</button>
         </div>
       `;
     })

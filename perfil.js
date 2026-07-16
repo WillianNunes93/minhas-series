@@ -66,10 +66,9 @@ function DistribuidorasFavoritasSeletor(favoritas) {
   const opcoes = DISTRIBUIDORAS_FAVORITAS_DISPONIVEIS.map((nome) => {
     const marcada = favoritas.includes(nome);
     return `
-      <label class="favorita-item">
-        <input type="checkbox" data-favorita="${escapeHtml(nome)}" ${marcada ? "checked" : ""}>
+      <button type="button" class="favorita-item ${marcada ? "ativa" : ""}" data-favorita="${escapeHtml(nome)}">
         ${escapeHtml(nome)}
-      </label>
+      </button>
     `;
   }).join("");
   return `<div class="favoritas-lista">${opcoes}</div>`;
@@ -227,8 +226,9 @@ modalPerfilCorpoEl.addEventListener("click", (evento) => {
   }
 });
 
-modalPerfilCorpoEl.addEventListener("change", (evento) => {
-  const checkbox = evento.target.closest("[data-favorita]");
-  if (!checkbox) return;
-  alternarDistribuidoraFavorita(checkbox.dataset.favorita);
+modalPerfilCorpoEl.addEventListener("click", (evento) => {
+  const botao = evento.target.closest("[data-favorita]");
+  if (!botao) return;
+  botao.classList.toggle("ativa");
+  alternarDistribuidoraFavorita(botao.dataset.favorita);
 });
