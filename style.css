@@ -130,6 +130,58 @@ header p {
   font-size: 0.85rem;
 }
 
+.banner-atualizacao {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: linear-gradient(135deg, var(--cor-destaque), #6d28d9);
+  color: white;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.banner-atualizacao span {
+  flex: 1;
+}
+
+.banner-atualizacao button {
+  width: auto;
+  white-space: nowrap;
+}
+
+#btn-atualizar-app {
+  background: white;
+  color: var(--cor-destaque-hover);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.82rem;
+  box-shadow: none;
+}
+
+#btn-atualizar-app:hover {
+  background: white;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.9;
+}
+
+.btn-fechar-banner {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 0.3rem;
+  font-size: 0.9rem;
+  box-shadow: none;
+}
+
+.btn-fechar-banner:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: none;
+  box-shadow: none;
+}
+
 .usuario-barra > button,
 .usuario-barra > a {
   width: auto;
