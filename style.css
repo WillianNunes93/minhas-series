@@ -413,6 +413,30 @@ main {
     font-size: 0.68rem;
     white-space: nowrap;
   }
+
+  /* Início fica no meio da barra, com o ícone num círculo maior e elevado
+     — um destaque visual de botão principal, como em apps de streaming. */
+  .bottom-nav-central {
+    background: transparent;
+  }
+
+  .bottom-nav-central.ativa {
+    background: transparent;
+  }
+
+  .bottom-nav-central .bottom-nav-icone {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cor-destaque), #6d28d9);
+    box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.7);
+    font-size: 1.5rem;
+    color: white;
+  }
 }
 
 @keyframes subir-sheet {
