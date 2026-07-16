@@ -120,6 +120,7 @@ function iniciarListenerSeries(db, uid) {
     TimelinePage();
     atualizarModalEpisodios();
     EstatisticasPage();
+    reagendarNotificacoesLancamento(series);
   });
 }
 
