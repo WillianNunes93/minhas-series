@@ -339,14 +339,6 @@ main {
   display: none;
 }
 
-.sheet-overlay {
-  display: none;
-}
-
-.mais-sheet {
-  display: none;
-}
-
 @media (max-width: 900px) {
   #app-container {
     flex-direction: column;
@@ -375,10 +367,16 @@ main {
     background: linear-gradient(180deg, var(--cor-card), var(--cor-card-alt));
     border-top: 1px solid var(--cor-borda);
     padding: 0.4rem 0.3rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
   }
 
+  /* Os 7 itens não cabem juntos na tela: em vez de esconder alguns atrás
+     de um botão "Mais", a barra toda rola para o lado (arraste). */
   .bottom-nav-btn {
-    flex: 1;
+    flex: 0 0 auto;
+    width: 74px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -391,6 +389,7 @@ main {
     border-radius: 12px;
     font-weight: 600;
     box-shadow: none;
+    scroll-snap-align: start;
   }
 
   .bottom-nav-btn:hover {
@@ -412,37 +411,8 @@ main {
 
   .bottom-nav-label {
     font-size: 0.68rem;
+    white-space: nowrap;
   }
-
-  .sheet-overlay:not([hidden]) {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 210;
-  }
-
-  .mais-sheet:not([hidden]) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 220;
-    background: linear-gradient(180deg, var(--cor-card), var(--cor-card-alt));
-    border-radius: 20px 20px 0 0;
-    padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
-    animation: subir-sheet 0.2s ease-out;
-  }
-
-  .mais-sheet .sheet-item {
-    width: 100%;
-    text-align: left;
-    border-radius: 10px;
-  }
-
 }
 
 @keyframes subir-sheet {
