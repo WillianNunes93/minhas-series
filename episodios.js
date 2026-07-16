@@ -138,12 +138,12 @@ function renderModalEpisodios() {
   `;
 }
 
-function abrirModalEpisodios(serieId) {
+function abrirModalEpisodios(serieId, temporadaInicial) {
   const serie = series.find((s) => s.id === serieId);
   if (!serie || !serie.temporadas) return;
 
   serieModalId = serieId;
-  temporadaSelecionadaModal = serie.temporadas;
+  temporadaSelecionadaModal = temporadaInicial || serie.temporadas;
   renderModalEpisodios();
   modalEpisodiosEl.hidden = false;
 }
