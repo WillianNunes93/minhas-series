@@ -1371,6 +1371,12 @@ button:active {
   margin: 0 0 1rem;
 }
 
+.resultados-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+}
+
 .serie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
