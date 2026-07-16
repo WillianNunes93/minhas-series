@@ -31,6 +31,7 @@ let distribuidorasEditaveis = [];
 const buscaNomeEl = document.getElementById("busca-nome");
 const btnBuscarEl = document.getElementById("btn-buscar");
 const resultadosBuscaEl = document.getElementById("resultados-busca");
+const resultadosTituloEl = document.getElementById("resultados-titulo");
 
 const form = document.getElementById("form-serie");
 const previewBackdropEl = document.getElementById("preview-backdrop");
@@ -330,6 +331,28 @@ async function buscarSeriesTMDB(nome) {
   return dados.results.slice(0, 5);
 }
 
+async function buscarTrendingTMDB() {
+  const url = `${TMDB_BASE}/trending/tv/week?api_key=${TMDB_API_KEY}&language=pt-BR`;
+  const resposta = await fetch(url);
+  if (!resposta.ok) throw new Error("Falha ao buscar séries em alta no TMDB");
+  const dados = await resposta.json();
+  return dados.results.slice(0, 10);
+}
+
+// Mostra séries em alta assim que a aba Consultar carrega, em vez de uma
+// tela em branco até o usuário digitar algo. Silencioso em caso de falha:
+// a busca manual continua funcionando normalmente.
+async function mostrarSugestoesIniciais() {
+  if (!TMDB_API_KEY) return;
+  try {
+    const resultados = await buscarTrendingTMDB();
+    resultadosTituloEl.hidden = false;
+    renderizarResultadosBusca(resultados);
+  } catch (erro) {
+    // Sem sugestão inicial não impede a busca manual — segue sem nada.
+  }
+}
+
 async function buscarDetalhesTMDB(tmdbId) {
   const url = `${TMDB_BASE}/tv/${tmdbId}?api_key=${TMDB_API_KEY}&language=pt-BR&append_to_response=watch/providers,recommendations`;
   const resposta = await fetch(url);
@@ -495,6 +518,7 @@ function renderizarResultadosBusca(resultados) {
 }
 
 async function selecionarResultado(resultado) {
+  resultadosTituloEl.hidden = true;
   resultadosBuscaEl.innerHTML = '<p class="vazio">Carregando detalhes...</p>';
   form.hidden = true;
 
@@ -668,6 +692,7 @@ function fecharFormConfirmacao() {
   form.reset();
   buscaNomeEl.value = "";
   resultadosBuscaEl.innerHTML = "";
+  mostrarSugestoesIniciais();
 }
 
 function atualizarFiltro() {
@@ -915,6 +940,8 @@ btnBuscarEl.addEventListener("click", async () => {
   const nome = buscaNomeEl.value.trim();
   if (!nome) return;
 
+  resultadosTituloEl.hidden = true;
+
   if (!TMDB_API_KEY) {
     resultadosBuscaEl.innerHTML =
       '<p class="vazio">Configure sua chave do TMDB em config.js para buscar automaticamente.</p>';
@@ -1106,3 +1133,5 @@ document.addEventListener("click", (evento) => {
     painelNotificacoesEl.hidden = true;
   }
 });
+
+mostrarSugestoesIniciais();
