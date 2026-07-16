@@ -93,6 +93,12 @@
     </nav>
 
     <div class="conteudo-app">
+      <div class="banner-atualizacao" id="banner-atualizacao" hidden>
+        <span>📲 Tem uma versão nova do app disponível.</span>
+        <button type="button" id="btn-atualizar-app">Atualizar</button>
+        <button type="button" id="btn-dispensar-atualizacao" class="btn-fechar-banner" aria-label="Dispensar aviso de atualização">✕</button>
+      </div>
+
       <div class="usuario-barra">
         <button type="button" id="btn-perfil" class="btn-perfil-barra">
           <span id="perfil-avatar-barra" class="perfil-avatar-barra">🙂</span>
@@ -348,6 +354,7 @@
   <script src="firebase-config.js"></script>
   <script src="config.js"></script>
   <script src="notificacoes-locais.js"></script>
+  <script src="verificar-atualizacao.js"></script>
   <script src="script.js"></script>
   <script src="episodios.js"></script>
   <script src="dashboard.js"></script>
