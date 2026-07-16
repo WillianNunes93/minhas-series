@@ -91,6 +91,35 @@ header p {
   transform: none;
 }
 
+.zona-risco {
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.zona-risco-titulo {
+  color: var(--cor-alerta);
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+
+.btn-perigo {
+  background: transparent;
+  border: 1px solid var(--cor-alerta);
+  color: var(--cor-alerta);
+  margin-top: 0.6rem;
+  box-shadow: none;
+}
+
+.btn-perigo:hover {
+  background: var(--cor-alerta);
+  border-color: var(--cor-alerta);
+  color: white;
+  box-shadow: none;
+  transform: none;
+}
+
 .usuario-barra {
   margin-bottom: 1rem;
   display: flex;
@@ -2005,7 +2034,7 @@ button:active {
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  z-index: 100;
+  z-index: 300;
 }
 
 .modal-conteudo {

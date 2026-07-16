@@ -16,6 +16,7 @@ let unsubscribePerfil = null;
 let perfilUsuario = null;
 let modalPerfilAberto = false;
 let mensagemSenhaEl = null;
+let mensagemExclusaoEl = null;
 
 function iniciarListenerPerfil(db, uid) {
   perfilRef = db.collection("usuarios").doc(uid);
@@ -121,9 +122,23 @@ function renderModalPerfil() {
       ${souAdmin ? '<a href="admin.html" class="link-acao-conta">Painel admin</a>' : ""}
       <button type="button" id="btn-sair" class="btn-secundario">Sair</button>
     </div>
+
+    <div class="zona-risco">
+      <p class="zona-risco-titulo">Zona de risco</p>
+      <p class="serie-meta">Excluir sua conta apaga permanentemente suas séries, atividades, notificações, amizades e indicações. Essa ação não pode ser desfeita.</p>
+      <input type="password" id="input-senha-exclusao" placeholder="Digite sua senha para confirmar" style="margin-top:0.5rem">
+      <button type="button" id="btn-excluir-conta" class="btn-perigo">Excluir minha conta</button>
+      <div id="confirmacao-exclusao" hidden style="margin-top:0.6rem">
+        <p class="serie-meta" style="color:#e74c3c">Tem certeza? Essa ação é permanente e não pode ser desfeita.</p>
+        <button type="button" id="btn-confirmar-exclusao" class="btn-perigo">Sim, excluir permanentemente</button>
+        <button type="button" id="btn-cancelar-exclusao" class="btn-secundario">Cancelar</button>
+      </div>
+      <p id="mensagem-exclusao" class="vazio aviso-inline" hidden></p>
+    </div>
   `;
 
   mensagemSenhaEl = document.getElementById("mensagem-senha");
+  mensagemExclusaoEl = document.getElementById("mensagem-exclusao");
 }
 
 function abrirModalPerfil() {
@@ -192,6 +207,77 @@ async function trocarSenha() {
   }
 }
 
+function mostrarMensagemExclusao(texto) {
+  if (!mensagemExclusaoEl) return;
+  mensagemExclusaoEl.textContent = texto;
+  mensagemExclusaoEl.style.color = "#e74c3c";
+  mensagemExclusaoEl.hidden = false;
+}
+
+// Apaga tudo que pertence ao usuário antes da conta em si: as coleções
+// filhas de usuarios/{uid} não somem sozinhas quando o doc pai é
+// excluído, e os registros de amizade/indicação vivem em coleções à
+// parte (podem citar o uid tanto como remetente quanto destinatário).
+async function excluirDadosDoUsuario(uid) {
+  const userRef = db.collection("usuarios").doc(uid);
+
+  const [seriesSnap, atividadesSnap, notificacoesSnap, amizadeRemetenteSnap, amizadeDestinatarioSnap, indicacaoRemetenteSnap, indicacaoDestinatarioSnap] =
+    await Promise.all([
+      userRef.collection("series").get(),
+      userRef.collection("atividades").get(),
+      userRef.collection("notificacoes").get(),
+      db.collection("solicitacoesAmizade").where("remetente", "==", uid).get(),
+      db.collection("solicitacoesAmizade").where("destinatario", "==", uid).get(),
+      db.collection("indicacoes").where("remetente", "==", uid).get(),
+      db.collection("indicacoes").where("destinatario", "==", uid).get(),
+    ]);
+
+  const batch = db.batch();
+  [
+    ...seriesSnap.docs,
+    ...atividadesSnap.docs,
+    ...notificacoesSnap.docs,
+    ...amizadeRemetenteSnap.docs,
+    ...amizadeDestinatarioSnap.docs,
+    ...indicacaoRemetenteSnap.docs,
+    ...indicacaoDestinatarioSnap.docs,
+  ].forEach((doc) => batch.delete(doc.ref));
+  batch.delete(userRef);
+
+  await batch.commit();
+}
+
+function pedirConfirmacaoExclusao() {
+  const senha = document.getElementById("input-senha-exclusao").value;
+  if (!senha) {
+    mostrarMensagemExclusao("Digite sua senha para confirmar.");
+    return;
+  }
+  document.getElementById("confirmacao-exclusao").hidden = false;
+}
+
+function cancelarExclusao() {
+  document.getElementById("confirmacao-exclusao").hidden = true;
+}
+
+async function excluirConta() {
+  const senha = document.getElementById("input-senha-exclusao").value;
+  if (!senha) {
+    mostrarMensagemExclusao("Digite sua senha para confirmar.");
+    return;
+  }
+
+  try {
+    const usuario = auth.currentUser;
+    const credential = firebase.auth.EmailAuthProvider.credential(usuario.email, senha);
+    await usuario.reauthenticateWithCredential(credential);
+    await excluirDadosDoUsuario(usuario.uid);
+    await usuario.delete();
+  } catch (erro) {
+    mostrarMensagemExclusao(MENSAGENS_ERRO_SENHA[erro.code] || "Não foi possível excluir a conta. Tente novamente.");
+  }
+}
+
 btnPerfilEl.addEventListener("click", abrirModalPerfil);
 btnFecharPerfilEl.addEventListener("click", fecharModalPerfil);
 
@@ -217,6 +303,21 @@ modalPerfilCorpoEl.addEventListener("click", (evento) => {
   if (evento.target.id === "btn-sair") {
     fecharModalPerfil();
     auth.signOut();
+    return;
+  }
+
+  if (evento.target.id === "btn-excluir-conta") {
+    pedirConfirmacaoExclusao();
+    return;
+  }
+
+  if (evento.target.id === "btn-confirmar-exclusao") {
+    excluirConta();
+    return;
+  }
+
+  if (evento.target.id === "btn-cancelar-exclusao") {
+    cancelarExclusao();
     return;
   }
 
