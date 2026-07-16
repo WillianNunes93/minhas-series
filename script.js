@@ -73,8 +73,12 @@ const paineisTab = {
   discovery: document.getElementById("painel-discovery"),
 };
 
+const ABAS_NO_MAIS = ["estatisticas", "amigos", "discovery"];
+const btnMaisNavEl = document.getElementById("btn-mais-nav");
+
 function mudarTab(nomeTab) {
   tabButtons.forEach((botao) => botao.classList.toggle("ativa", botao.dataset.tab === nomeTab));
+  btnMaisNavEl.classList.toggle("ativa", ABAS_NO_MAIS.includes(nomeTab));
   Object.entries(paineisTab).forEach(([nome, elemento]) => {
     elemento.hidden = nome !== nomeTab;
   });
@@ -101,10 +105,31 @@ btnMenuMobileEl.addEventListener("click", () => {
 
 sidebarOverlayEl.addEventListener("click", fecharSidebar);
 
+const maisSheetEl = document.getElementById("mais-sheet");
+const maisOverlayEl = document.getElementById("mais-overlay");
+
+function abrirMaisSheet() {
+  maisSheetEl.hidden = false;
+  maisOverlayEl.hidden = false;
+}
+
+function fecharMaisSheet() {
+  maisSheetEl.hidden = true;
+  maisOverlayEl.hidden = true;
+}
+
+btnMaisNavEl.addEventListener("click", () => {
+  if (maisSheetEl.hidden) abrirMaisSheet();
+  else fecharMaisSheet();
+});
+
+maisOverlayEl.addEventListener("click", fecharMaisSheet);
+
 tabButtons.forEach((botao) => {
   botao.addEventListener("click", () => {
     mudarTab(botao.dataset.tab);
     fecharSidebar();
+    fecharMaisSheet();
   });
 });
 

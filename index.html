@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Minhas Séries</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,6 +60,36 @@
     </nav>
 
     <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+
+    <nav class="bottom-nav" id="bottom-nav">
+      <button type="button" class="tab-btn bottom-nav-btn ativa" data-tab="dashboard">
+        <span class="bottom-nav-icone">📊</span>
+        <span class="bottom-nav-label">Início</span>
+      </button>
+      <button type="button" class="tab-btn bottom-nav-btn" data-tab="consultar">
+        <span class="bottom-nav-icone">🔍</span>
+        <span class="bottom-nav-label">Buscar</span>
+      </button>
+      <button type="button" class="tab-btn bottom-nav-btn" data-tab="lista">
+        <span class="bottom-nav-icone">📋</span>
+        <span class="bottom-nav-label">Lista</span>
+      </button>
+      <button type="button" class="tab-btn bottom-nav-btn" data-tab="timeline">
+        <span class="bottom-nav-icone">🗓️</span>
+        <span class="bottom-nav-label">Timeline</span>
+      </button>
+      <button type="button" class="bottom-nav-btn" id="btn-mais-nav">
+        <span class="bottom-nav-icone">⋯</span>
+        <span class="bottom-nav-label">Mais</span>
+      </button>
+    </nav>
+
+    <div class="sheet-overlay" id="mais-overlay" hidden></div>
+    <div class="mais-sheet" id="mais-sheet" hidden>
+      <button type="button" class="tab-btn sheet-item" data-tab="estatisticas">📈 Estatísticas</button>
+      <button type="button" class="tab-btn sheet-item" data-tab="amigos">👥 Amigos</button>
+      <button type="button" class="tab-btn sheet-item" data-tab="discovery">🧭 Discovery</button>
+    </div>
 
     <div class="conteudo-app">
       <div class="usuario-barra">

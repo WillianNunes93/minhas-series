@@ -335,39 +335,122 @@ main {
   border-color: transparent;
 }
 
+.bottom-nav {
+  display: none;
+}
+
+.sheet-overlay {
+  display: none;
+}
+
+.mais-sheet {
+  display: none;
+}
+
 @media (max-width: 900px) {
   #app-container {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .btn-menu-mobile {
+  /* No mobile a navegação é a barra inferior — o menu hambúrguer e a
+     gaveta lateral saem de cena por completo, em vez de coexistir. */
+  .btn-menu-mobile,
+  .sidebar,
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  main {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .bottom-nav {
     display: flex;
-    margin-bottom: 0.5rem;
-  }
-
-  .sidebar {
     position: fixed;
-    top: 0;
-    left: -260px;
-    height: 100vh;
-    width: 260px;
-    z-index: 200;
-    border-radius: 0;
-    transition: left 0.2s ease;
-    overflow-y: auto;
-  }
-
-  .sidebar.aberta {
     left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    background: linear-gradient(180deg, var(--cor-card), var(--cor-card-alt));
+    border-top: 1px solid var(--cor-borda);
+    padding: 0.4rem 0.3rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
   }
 
-  .sidebar-overlay:not([hidden]) {
+  .bottom-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    background: transparent;
+    border: none;
+    color: var(--cor-texto-fraco);
+    padding: 0.4rem 0.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: none;
+  }
+
+  .bottom-nav-btn:hover {
+    background: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .bottom-nav-btn.ativa {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--cor-texto);
+    border-color: transparent;
+  }
+
+  .bottom-nav-icone {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .bottom-nav-label {
+    font-size: 0.68rem;
+  }
+
+  .sheet-overlay:not([hidden]) {
     display: block;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 150;
+    z-index: 210;
+  }
+
+  .mais-sheet:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 220;
+    background: linear-gradient(180deg, var(--cor-card), var(--cor-card-alt));
+    border-radius: 20px 20px 0 0;
+    padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    animation: subir-sheet 0.2s ease-out;
+  }
+
+  .mais-sheet .sheet-item {
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+  }
+
+}
+
+@keyframes subir-sheet {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
   }
 }
 
@@ -1359,6 +1442,22 @@ button:active {
   box-shadow: none;
 }
 
+@media (max-width: 900px) {
+  /* Em telas de toque não existe :hover — os botões de ação do card
+     (favoritar, indicar, editar, remover) precisam ficar sempre visíveis
+     em vez de aparecer só ao passar o mouse. */
+  .serie-overlay {
+    opacity: 1;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 60%);
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 1.05rem;
+  }
+}
+
 .serie-info {
   padding: 0.65rem 0.7rem 0.8rem;
   display: flex;
@@ -1937,8 +2036,19 @@ button:active {
 }
 
 @media (max-width: 640px) {
+  /* Modais viram bottom sheets no mobile: deslizam a partir da base da
+     tela em vez de aparecer centralizados, seguindo o padrão de apps nativos. */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
   .modal-conteudo {
-    padding: 1.25rem;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+    padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    animation: subir-sheet 0.2s ease-out;
   }
 }
 
