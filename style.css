@@ -65,6 +65,12 @@ header h1 {
   color: transparent;
 }
 
+:root[data-tema="claro"] header h1 {
+  background: linear-gradient(135deg, #4c1d95, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 header h1 .emoji {
   -webkit-text-fill-color: initial;
 }
@@ -1807,15 +1813,15 @@ button:active {
   font-size: 0.75rem;
 }
 
-.badge.quero-assistir { color: #f1c40f; border-color: rgba(241, 196, 15, 0.4); }
-.badge.assistindo { color: #3498db; border-color: rgba(52, 152, 219, 0.4); }
-.badge.pausada { color: #f39c12; border-color: rgba(243, 156, 18, 0.4); }
-.badge.completa { color: #2ecc71; border-color: rgba(46, 204, 113, 0.4); }
+.badge.quero-assistir { color: var(--cor-atencao); border-color: rgba(184, 121, 10, 0.35); }
+.badge.assistindo { color: var(--cor-informativo); border-color: rgba(31, 123, 191, 0.35); }
+.badge.pausada { color: var(--cor-atencao); border-color: rgba(184, 121, 10, 0.35); }
+.badge.completa { color: var(--cor-positivo); border-color: rgba(30, 158, 90, 0.35); }
 .badge.abandonada { color: #7f8c8d; border-color: rgba(127, 140, 141, 0.4); }
-.badge.cancelada { color: #e74c3c; border-color: #e74c3c; }
-.badge.confirmada { color: #2ecc71; border-color: rgba(46, 204, 113, 0.4); }
-.badge.em-exibicao { color: #8b5cf6; border-color: rgba(139, 92, 246, 0.4); }
-.badge.sem-data { color: #3498db; border-color: rgba(52, 152, 219, 0.4); }
+.badge.cancelada { color: var(--cor-alerta); border-color: var(--cor-alerta); }
+.badge.confirmada { color: var(--cor-positivo); border-color: rgba(30, 158, 90, 0.35); }
+.badge.em-exibicao { color: var(--cor-destaque); border-color: rgba(124, 58, 237, 0.35); }
+.badge.sem-data { color: var(--cor-informativo); border-color: rgba(31, 123, 191, 0.35); }
 .badge.encerrada { color: var(--cor-texto-fraco); }
 
 .select-status {
@@ -1827,10 +1833,10 @@ button:active {
   background: rgba(0, 0, 0, 0.25);
 }
 
-.select-status.status-quero-assistir { color: #f1c40f; border-color: rgba(241, 196, 15, 0.4); }
-.select-status.status-assistindo { color: #3498db; border-color: rgba(52, 152, 219, 0.4); }
-.select-status.status-pausada { color: #f39c12; border-color: rgba(243, 156, 18, 0.4); }
-.select-status.status-completa { color: #2ecc71; border-color: rgba(46, 204, 113, 0.4); }
+.select-status.status-quero-assistir { color: var(--cor-atencao); border-color: rgba(184, 121, 10, 0.35); }
+.select-status.status-assistindo { color: var(--cor-informativo); border-color: rgba(31, 123, 191, 0.35); }
+.select-status.status-pausada { color: var(--cor-atencao); border-color: rgba(184, 121, 10, 0.35); }
+.select-status.status-completa { color: var(--cor-positivo); border-color: rgba(30, 158, 90, 0.35); }
 .select-status.status-abandonada { color: #7f8c8d; border-color: rgba(127, 140, 141, 0.4); }
 
 .temporadas-pills {
