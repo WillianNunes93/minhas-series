@@ -14,6 +14,22 @@
   --cor-alerta: #e74c3c;
 }
 
+:root[data-tema="claro"] {
+  --cor-fundo: #f7f6fc;
+  --cor-card: #ffffff;
+  --cor-card-alt: #eeecf9;
+  --cor-borda: #e2e0ee;
+  --cor-texto: #1a1b26;
+  --cor-texto-fraco: #6b6e82;
+  --cor-destaque: #7c3aed;
+  --cor-destaque-hover: #6d28d9;
+  --cor-marca: #7c3aed;
+  --cor-positivo: #1e9e5a;
+  --cor-informativo: #1f7bbf;
+  --cor-atencao: #b8790a;
+  --cor-alerta: #d33a2c;
+}
+
 * {
   box-sizing: border-box;
 }

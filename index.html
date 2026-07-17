@@ -2,6 +2,13 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <script>
+    (function () {
+      var salvo = localStorage.getItem("temaPreferido");
+      var tema = salvo || (window.matchMedia("(prefers-color-scheme: light)").matches ? "claro" : "escuro");
+      document.documentElement.setAttribute("data-tema", tema);
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Minhas Séries</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
