@@ -13,6 +13,7 @@
   --cor-atencao: #f39c12;
   --cor-alerta: #e74c3c;
   --cor-campo-fundo: rgba(0, 0, 0, 0.25);
+  --cor-superficie: rgba(0, 0, 0, 0.22);
 }
 
 :root[data-tema="claro"] {
@@ -30,6 +31,7 @@
   --cor-atencao: #b8790a;
   --cor-alerta: #d33a2c;
   --cor-campo-fundo: rgba(0, 0, 0, 0.05);
+  --cor-superficie: rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -71,6 +73,10 @@ header h1 {
   background: linear-gradient(135deg, #4c1d95, #7c3aed);
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+:root[data-tema="claro"] .today-card-detalhes {
+  background: rgba(0, 0, 0, 0.035);
 }
 
 header h1 .emoji {
@@ -619,7 +625,7 @@ main {
   align-items: flex-start;
   gap: 0.7rem;
   text-align: left;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-left: 3px solid var(--cor-borda);
   border-radius: 12px;
@@ -1160,7 +1166,7 @@ button:active {
 .resultado-card {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 12px;
   overflow: hidden;
@@ -1176,7 +1182,7 @@ button:active {
 .resultado-card:hover {
   border-color: var(--cor-destaque);
   transform: translateY(-3px);
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.7);
 }
 
@@ -1337,7 +1343,7 @@ button:active {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
   overflow: hidden;
@@ -1353,7 +1359,7 @@ button:active {
 .recomendacao-card:hover {
   border-color: var(--cor-destaque);
   transform: translateY(-2px);
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   box-shadow: none;
 }
 
@@ -1499,7 +1505,7 @@ button:active {
 }
 
 .serie-card {
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 12px;
   overflow: hidden;
@@ -1900,7 +1906,7 @@ button:active {
 }
 
 .stat-card {
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 12px;
   padding: 1.1rem;
@@ -1926,7 +1932,7 @@ button:active {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
   padding: 0.8rem 1rem;
@@ -1996,7 +2002,7 @@ button:active {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-left: 3px solid var(--cor-borda);
   border-radius: 12px;
@@ -2236,7 +2242,7 @@ button:active {
   font-size: 0.88rem;
   font-weight: 500;
   padding: 0.55rem 0.7rem;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
   cursor: pointer;
@@ -2290,7 +2296,7 @@ button:active {
   height: 40px;
   padding: 0;
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   font-size: 1.2rem;
   display: flex;
@@ -2303,7 +2309,7 @@ button:active {
   border-color: var(--cor-destaque);
   transform: none;
   box-shadow: none;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
 }
 
 .avatar-opcao.selecionado {
@@ -2322,7 +2328,7 @@ button:active {
   width: auto;
   font-size: 0.85rem;
   padding: 0.4rem 0.9rem;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 999px;
   cursor: pointer;
@@ -2332,7 +2338,7 @@ button:active {
 
 .favorita-item:hover {
   border-color: var(--cor-destaque);
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   transform: none;
   box-shadow: none;
 }
@@ -2354,7 +2360,7 @@ button:active {
   align-items: center;
   gap: 0.7rem;
   padding: 0.6rem 0.8rem;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
   margin-bottom: 0.5rem;
@@ -2398,7 +2404,7 @@ button:active {
 }
 
 .amigo-card {
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 12px;
   padding: 1rem;
@@ -2496,7 +2502,7 @@ button:active {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   border-radius: 999px;
   padding: 0.4rem 0.9rem 0.4rem 0.4rem;
@@ -2508,7 +2514,7 @@ button:active {
 
 .discovery-distribuidora-opcao:hover {
   border-color: var(--cor-destaque);
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--cor-superficie);
   transform: none;
   box-shadow: none;
 }
