@@ -12,6 +12,7 @@
   --cor-informativo: #3498db;
   --cor-atencao: #f39c12;
   --cor-alerta: #e74c3c;
+  --cor-campo-fundo: rgba(0, 0, 0, 0.25);
 }
 
 :root[data-tema="claro"] {
@@ -28,6 +29,7 @@
   --cor-informativo: #1f7bbf;
   --cor-atencao: #b8790a;
   --cor-alerta: #d33a2c;
+  --cor-campo-fundo: rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -1087,7 +1089,7 @@ label {
 
 input,
 select {
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--cor-campo-fundo);
   border: 1px solid var(--cor-borda);
   color: var(--cor-texto);
   padding: 0.65rem 0.75rem;
@@ -1830,7 +1832,7 @@ button:active {
   font-weight: 600;
   padding: 0.15rem 1.3rem 0.15rem 0.55rem;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--cor-campo-fundo);
 }
 
 .select-status.status-quero-assistir { color: var(--cor-atencao); border-color: rgba(184, 121, 10, 0.35); }
@@ -2138,7 +2140,7 @@ button:active {
   height: 30px;
   padding: 0;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--cor-campo-fundo);
   border: 1px solid var(--cor-borda);
   color: var(--cor-texto);
   box-shadow: none;
@@ -2146,7 +2148,7 @@ button:active {
 
 .modal-fechar:hover {
   border-color: var(--cor-destaque);
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--cor-campo-fundo);
   transform: none;
   box-shadow: none;
 }
