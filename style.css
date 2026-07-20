@@ -151,7 +151,15 @@ header p {
 }
 
 .usuario-barra {
-  margin-bottom: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 150;
+  background: color-mix(in srgb, var(--cor-fundo) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--cor-borda);
+  padding: 0.6rem 1.25rem;
+  margin: 0 -1.25rem 1rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
