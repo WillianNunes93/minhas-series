@@ -500,7 +500,7 @@ main {
   }
 
   main {
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px));
   }
 
   .bottom-nav {
@@ -518,7 +518,10 @@ main {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--cor-borda);
-    padding: 0.4rem 0.3rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
+    /* Padding-top maior do que o resto — o ícone elevado do "Início" (abaixo)
+       precisa dessa folga, senão o overflow-x:auto corta o topo do círculo
+       (overflow-x != visible força overflow-y para "auto" também). */
+    padding: 1.1rem 0.3rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
