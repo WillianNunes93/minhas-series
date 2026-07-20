@@ -1111,6 +1111,16 @@ main {
   font-size: 0.85rem;
 }
 
+.atividade-amigo-nome {
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--cor-destaque);
+}
+
+.feed-atividades-amigos {
+  margin-bottom: 1.3rem;
+}
+
 .atividade-descricao {
   font-size: 0.75rem;
   color: var(--cor-texto-fraco);

@@ -1,3 +1,4 @@
+const feedAtividadesAmigosSecaoEl = document.getElementById("feed-atividades-amigos-secao");
 const buscaAmigoEl = document.getElementById("busca-amigo");
 const btnBuscarAmigoEl = document.getElementById("btn-buscar-amigo");
 const resultadoBuscaAmigoEl = document.getElementById("resultado-busca-amigo");
@@ -26,6 +27,7 @@ let solicitacoesRecebidas = [];
 let solicitacoesEnviadas = [];
 let amigosAceitos = [];
 let listenersSeriesAmigos = {};
+let listenersAtividadesAmigos = {};
 let ultimoResultadoBusca = [];
 
 let amigoPerfilAtual = null;
@@ -64,7 +66,9 @@ function pararListenersAmizade() {
   if (unsubscribeSolicitacoesRecebidas) unsubscribeSolicitacoesRecebidas();
   if (unsubscribeSolicitacoesEnviadas) unsubscribeSolicitacoesEnviadas();
   Object.values(listenersSeriesAmigos).forEach((entrada) => entrada.unsubscribe());
+  Object.values(listenersAtividadesAmigos).forEach((entrada) => entrada.unsubscribe());
   listenersSeriesAmigos = {};
+  listenersAtividadesAmigos = {};
   solicitacoesAmizadeRef = null;
   ultimoSnapshotRecebidas = [];
   ultimoSnapshotEnviadas = [];
@@ -92,6 +96,7 @@ function recomputarAmizades(uid) {
     });
 
   atualizarListenersSeriesAmigos();
+  atualizarListenersAtividadesAmigos();
   renderizarAmigos();
 }
 
@@ -130,6 +135,88 @@ function atualizarListenersSeriesAmigos() {
         }
       );
   });
+}
+
+// Mesma lógica de atualizarListenersSeriesAmigos, mas para a subcoleção
+// "atividades" de cada amigo — alimenta o feed combinado no topo da aba.
+function atualizarListenersAtividadesAmigos() {
+  const uidsAtuais = new Set(amigosAceitos.map((a) => a.uid));
+
+  Object.keys(listenersAtividadesAmigos).forEach((uidAmigo) => {
+    if (!uidsAtuais.has(uidAmigo) || listenersAtividadesAmigos[uidAmigo].erro) {
+      listenersAtividadesAmigos[uidAmigo].unsubscribe();
+      delete listenersAtividadesAmigos[uidAmigo];
+    }
+  });
+
+  amigosAceitos.forEach((amigo) => {
+    if (listenersAtividadesAmigos[amigo.uid]) return;
+
+    const entrada = { atividades: [], erro: false, unsubscribe: () => {} };
+    listenersAtividadesAmigos[amigo.uid] = entrada;
+
+    entrada.unsubscribe = db
+      .collection("usuarios")
+      .doc(amigo.uid)
+      .collection("atividades")
+      .orderBy("criadoEm", "desc")
+      .limit(5)
+      .onSnapshot(
+        (snapshot) => {
+          entrada.atividades = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+          entrada.erro = false;
+          renderizarAmigos();
+        },
+        () => {
+          entrada.erro = true;
+          renderizarAmigos();
+        }
+      );
+  });
+}
+
+function FeedAtividadesAmigos() {
+  const entradasComErro = Object.values(listenersAtividadesAmigos).filter((e) => e.erro);
+  const todasEntradasComErro =
+    amigosAceitos.length > 0 && entradasComErro.length === amigosAceitos.length;
+
+  if (todasEntradasComErro) {
+    // Provavelmente as regras de segurança do Firestore ainda não liberam
+    // a leitura de "atividades" entre amigos (só "series" está liberado).
+    return "";
+  }
+
+  const combinadas = amigosAceitos.flatMap((amigo) => {
+    const entrada = listenersAtividadesAmigos[amigo.uid];
+    if (!entrada || entrada.erro) return [];
+    return entrada.atividades.map((atividade) => ({ ...atividade, amigoNome: amigo.nomeExibicao || "Amigo" }));
+  });
+
+  if (combinadas.length === 0) return "";
+
+  combinadas.sort((a, b) => (b.criadoEm?.toMillis?.() || 0) - (a.criadoEm?.toMillis?.() || 0));
+
+  const itens = combinadas
+    .slice(0, 15)
+    .map(
+      (atividade) => `
+        <div class="atividade-item">
+          <span class="atividade-icone">${ICONES_ATIVIDADE[atividade.tipo] || "•"}</span>
+          <div class="atividade-info">
+            <span class="atividade-amigo-nome">${escapeHtml(atividade.amigoNome)}</span>
+            <span class="atividade-serie">${escapeHtml(atividade.serieNome)}</span>
+            <span class="atividade-descricao">${escapeHtml(atividade.descricao)}</span>
+          </div>
+          <span class="atividade-data">${atividade.criadoEm ? atividade.criadoEm.toDate().toLocaleDateString("pt-BR") : "agora"}</span>
+        </div>
+      `
+    )
+    .join("");
+
+  return `
+    <h3 class="amigos-subtitulo">Atividade dos amigos</h3>
+    <div class="feed-atividades-amigos">${itens}</div>
+  `;
 }
 
 async function buscarUsuarioAmigo() {
@@ -474,11 +561,14 @@ function renderizarGradeAmigoPerfil() {
 
 function renderizarAmigos() {
   if (erroPermissaoAmizade) {
+    feedAtividadesAmigosSecaoEl.innerHTML = "";
     solicitacoesRecebidasSecaoEl.innerHTML = "";
     solicitacoesEnviadasSecaoEl.innerHTML = "";
     listaAmigosSecaoEl.innerHTML = '<p class="vazio">Não foi possível carregar amigos agora. Tente novamente mais tarde.</p>';
     return;
   }
+
+  feedAtividadesAmigosSecaoEl.innerHTML = FeedAtividadesAmigos();
 
   solicitacoesRecebidasSecaoEl.innerHTML = solicitacoesRecebidas.length > 0
     ? `<h3 class="amigos-subtitulo">Solicitações recebidas</h3>${solicitacoesRecebidas.map(SolicitacaoRecebidaItem).join("")}`
