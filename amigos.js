@@ -194,7 +194,9 @@ function FeedAtividadesAmigos() {
 
   if (combinadas.length === 0) return "";
 
-  combinadas.sort((a, b) => (b.criadoEm?.toMillis?.() || 0) - (a.criadoEm?.toMillis?.() || 0));
+  const millis = (atividade) =>
+    atividade.criadoEm && atividade.criadoEm.toMillis ? atividade.criadoEm.toMillis() : 0;
+  combinadas.sort((a, b) => millis(b) - millis(a));
 
   const itens = combinadas
     .slice(0, 15)
@@ -568,7 +570,14 @@ function renderizarAmigos() {
     return;
   }
 
-  feedAtividadesAmigosSecaoEl.innerHTML = FeedAtividadesAmigos();
+  try {
+    feedAtividadesAmigosSecaoEl.innerHTML = FeedAtividadesAmigos();
+  } catch (erro) {
+    // O feed é um extra — um erro aqui nunca pode derrubar o resto da aba
+    // (solicitações, lista de amigos).
+    console.error("Erro ao renderizar feed de atividade dos amigos:", erro);
+    feedAtividadesAmigosSecaoEl.innerHTML = "";
+  }
 
   solicitacoesRecebidasSecaoEl.innerHTML = solicitacoesRecebidas.length > 0
     ? `<h3 class="amigos-subtitulo">Solicitações recebidas</h3>${solicitacoesRecebidas.map(SolicitacaoRecebidaItem).join("")}`
