@@ -370,6 +370,27 @@ header p {
   color: var(--cor-texto-fraco);
 }
 
+@keyframes entrada-aba {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.painel-tab {
+  animation: entrada-aba 0.25s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel-tab {
+    animation: none;
+  }
+}
+
 #app-container {
   display: flex;
   align-items: flex-start;
