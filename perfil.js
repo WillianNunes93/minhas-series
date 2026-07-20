@@ -129,7 +129,7 @@ function renderModalPerfil() {
       <input type="password" id="input-senha-exclusao" placeholder="Digite sua senha para confirmar" style="margin-top:0.5rem">
       <button type="button" id="btn-excluir-conta" class="btn-perigo">Excluir minha conta</button>
       <div id="confirmacao-exclusao" hidden style="margin-top:0.6rem">
-        <p class="serie-meta" style="color:#e74c3c">Tem certeza? Essa ação é permanente e não pode ser desfeita.</p>
+        <p class="serie-meta" style="color:var(--cor-alerta)">Tem certeza? Essa ação é permanente e não pode ser desfeita.</p>
         <button type="button" id="btn-confirmar-exclusao" class="btn-perigo">Sim, excluir permanentemente</button>
         <button type="button" id="btn-cancelar-exclusao" class="btn-secundario">Cancelar</button>
       </div>
@@ -181,7 +181,7 @@ const MENSAGENS_ERRO_SENHA = {
 function mostrarMensagemSenha(texto, sucesso) {
   if (!mensagemSenhaEl) return;
   mensagemSenhaEl.textContent = texto;
-  mensagemSenhaEl.style.color = sucesso ? "var(--cor-positivo)" : "#e74c3c";
+  mensagemSenhaEl.style.color = sucesso ? "var(--cor-positivo)" : "var(--cor-alerta)";
   mensagemSenhaEl.hidden = false;
 }
 
@@ -210,7 +210,7 @@ async function trocarSenha() {
 function mostrarMensagemExclusao(texto) {
   if (!mensagemExclusaoEl) return;
   mensagemExclusaoEl.textContent = texto;
-  mensagemExclusaoEl.style.color = "#e74c3c";
+  mensagemExclusaoEl.style.color = "var(--cor-alerta)";
   mensagemExclusaoEl.hidden = false;
 }
 

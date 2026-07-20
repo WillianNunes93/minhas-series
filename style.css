@@ -8,10 +8,10 @@
   --cor-destaque: #8b5cf6;
   --cor-destaque-hover: #7c3aed;
   --cor-marca: #8b5cf6;
-  --cor-positivo: #2ecc71;
-  --cor-informativo: #3498db;
-  --cor-atencao: #f39c12;
-  --cor-alerta: #e74c3c;
+  --cor-positivo: #34c98d;
+  --cor-informativo: #5b8cff;
+  --cor-atencao: #e8a33d;
+  --cor-alerta: #f0576b;
   --cor-campo-fundo: rgba(0, 0, 0, 0.25);
   --cor-superficie: rgba(0, 0, 0, 0.22);
 }
@@ -26,10 +26,10 @@
   --cor-destaque: #7c3aed;
   --cor-destaque-hover: #6d28d9;
   --cor-marca: #7c3aed;
-  --cor-positivo: #1e9e5a;
-  --cor-informativo: #1f7bbf;
-  --cor-atencao: #b8790a;
-  --cor-alerta: #d33a2c;
+  --cor-positivo: #1f9e6c;
+  --cor-informativo: #3b63d9;
+  --cor-atencao: #ad7a1f;
+  --cor-alerta: #d33a4f;
   --cor-campo-fundo: rgba(0, 0, 0, 0.05);
   --cor-superficie: rgba(0, 0, 0, 0.05);
 }
@@ -45,6 +45,7 @@
 body {
   margin: 0;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  --fonte-destaque: "Fraunces", "Georgia", serif;
   background:
     radial-gradient(circle at 15% 0%, rgba(139, 92, 246, 0.16), transparent 45%),
     radial-gradient(circle at 85% 10%, rgba(139, 92, 246, 0.08), transparent 40%),
@@ -61,8 +62,9 @@ header {
 header h1 {
   margin: 0;
   font-size: 2.4rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  font-family: var(--fonte-destaque);
+  letter-spacing: -0.01em;
   background: linear-gradient(135deg, #fff, #b8a6ff);
   -webkit-background-clip: text;
   background-clip: text;
@@ -297,7 +299,15 @@ header p {
   border: 1px solid var(--cor-borda);
   box-shadow: none;
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
+}
+
+.btn-notificacoes svg {
+  width: 18px;
+  height: 18px;
 }
 
 .btn-notificacoes:hover {
@@ -311,7 +321,7 @@ header p {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #e74c3c;
+  background: var(--cor-alerta);
   color: white;
   font-size: 0.65rem;
   font-weight: 700;
@@ -453,6 +463,18 @@ main {
   border-radius: 999px;
   font-weight: 600;
   box-shadow: none;
+}
+
+.tab-btn-icone {
+  display: inline-flex;
+  vertical-align: -4px;
+  margin-right: 0.3rem;
+}
+
+.tab-btn-icone svg {
+  width: 17px;
+  height: 17px;
+  display: block;
 }
 
 .sidebar .tab-btn {
@@ -602,6 +624,12 @@ main {
     line-height: 1;
   }
 
+  .bottom-nav-icone svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
   .bottom-nav-label {
     font-size: 0.68rem;
     white-space: nowrap;
@@ -629,6 +657,11 @@ main {
     box-shadow: 0 10px 26px -6px rgba(139, 92, 246, 0.85);
     font-size: 1.5rem;
     color: white;
+  }
+
+  .bottom-nav-central .bottom-nav-icone svg {
+    width: 26px;
+    height: 26px;
   }
 }
 
@@ -671,8 +704,9 @@ main {
 
 .today-saudacao {
   margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: var(--fonte-destaque);
 }
 
 .today-mensagem {
@@ -849,7 +883,8 @@ main {
 
 .stat-valor {
   font-size: 1.7rem;
-  font-weight: 800;
+  font-weight: 600;
+  font-family: var(--fonte-destaque);
   margin-top: 0.2rem;
 }
 
@@ -1160,6 +1195,7 @@ h2 {
   margin: 0 0 1.1rem;
   font-size: 1.05rem;
   font-weight: 700;
+  font-family: var(--fonte-destaque);
 }
 
 .campo {
@@ -1343,8 +1379,9 @@ button:active {
 }
 
 .detalhe-nome {
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: 1.45rem;
+  font-weight: 600;
+  font-family: var(--fonte-destaque);
 }
 
 .detalhe-tagline {
@@ -1495,7 +1532,7 @@ button:active {
 }
 
 .tag-remover:hover {
-  color: #e74c3c;
+  color: var(--cor-alerta);
   background: transparent;
   transform: none;
   box-shadow: none;
@@ -1505,7 +1542,7 @@ button:active {
   padding: 0.4rem 0;
   text-align: left;
   font-size: 0.8rem;
-  color: #e74c3c;
+  color: var(--cor-alerta);
 }
 
 .lista-header {
@@ -1590,6 +1627,9 @@ button:active {
 .serie-card {
   background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
+  /* Fio com a cor da distribuidora principal — a mesma lógica de "borda
+     colorida à esquerda" já usada nos cards do Today Overview. */
+  border-left: 3px solid var(--cor-distribuidora, var(--cor-borda));
   border-radius: 12px;
   overflow: hidden;
   display: flex;
@@ -1599,7 +1639,11 @@ button:active {
 
 .serie-card:hover {
   transform: translateY(-3px);
-  border-color: var(--cor-marca);
+  /* Não usa o atalho border-color — isso sobrescreveria o fio da
+     distribuidora à esquerda com a cor da marca. */
+  border-top-color: var(--cor-marca);
+  border-right-color: var(--cor-marca);
+  border-bottom-color: var(--cor-marca);
   box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.7);
 }
 

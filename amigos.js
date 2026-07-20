@@ -417,7 +417,7 @@ function CardSerieAmigoReadonly(serie) {
     : "";
 
   return `
-    <div class="serie-card">
+    <div class="serie-card" style="--cor-distribuidora:${corDistribuidoraPrincipal(serie)}">
       <div class="serie-poster-wrap">
         ${poster}
         ${cancelada}

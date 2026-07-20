@@ -291,6 +291,14 @@ function renderizarSelosDistribuidoras(serie) {
   return `<div class="distribuidoras-selo-linha">${nomes.map((nome) => seloDistribuidora(nome, logos[nome])).join("")}</div>`;
 }
 
+// Cor da distribuidora principal (primeira da lista), usada como um fio de
+// destaque no card — reaproveita o mesmo mapeamento dos selos de fallback.
+function corDistribuidoraPrincipal(serie) {
+  const [nome] = distribuidorasDaSerie(serie);
+  const encontrado = nome && SELOS_DISTRIBUIDORA.find((s) => s.padrao.test(nome));
+  return encontrado ? encontrado.cor : "var(--cor-borda)";
+}
+
 async function adicionarSerie(serie) {
   await seriesRef.add({ ...serie, progressUpdatedAt: firebase.firestore.FieldValue.serverTimestamp() });
   await registrarAtividade("adicionada", serie.nome, "Série adicionada à lista");
@@ -883,7 +891,7 @@ function renderizarCard(serie) {
     : "";
 
   return `
-    <div class="serie-card">
+    <div class="serie-card" style="--cor-distribuidora:${corDistribuidoraPrincipal(serie)}">
       <div class="serie-poster-wrap">
         ${poster}
         ${cancelada}

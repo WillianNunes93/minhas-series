@@ -13,7 +13,7 @@
   <title>Minhas Séries</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -57,44 +57,44 @@
     <button type="button" id="btn-menu-mobile" class="btn-menu-mobile" aria-label="Abrir menu">☰</button>
 
     <nav class="sidebar" id="sidebar">
-      <button type="button" class="tab-btn ativa" data-tab="dashboard">📊 Dashboard</button>
-      <button type="button" class="tab-btn" data-tab="consultar">🔍 Consultar</button>
-      <button type="button" class="tab-btn" data-tab="lista">📋 Minha Lista</button>
-      <button type="button" class="tab-btn" data-tab="timeline">🗓️ Timeline</button>
-      <button type="button" class="tab-btn" data-tab="estatisticas">📈 Estatísticas</button>
-      <button type="button" class="tab-btn" data-tab="amigos">👥 Amigos</button>
-      <button type="button" class="tab-btn" data-tab="discovery">🧭 Discovery</button>
+      <button type="button" class="tab-btn ativa" data-tab="dashboard"><span class="tab-btn-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5a1 1 0 0 0 1 1h3.5v-6h3v6H17a1 1 0 0 0 1-1V10"/></svg></span> Dashboard</button>
+      <button type="button" class="tab-btn" data-tab="consultar"><span class="tab-btn-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span> Consultar</button>
+      <button type="button" class="tab-btn" data-tab="lista"><span class="tab-btn-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> Minha Lista</button>
+      <button type="button" class="tab-btn" data-tab="timeline"><span class="tab-btn-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/></svg></span> Timeline</button>
+      <button type="button" class="tab-btn" data-tab="estatisticas"><span class="tab-btn-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="15"/><line x1="3" y1="21" x2="21" y2="21"/></svg></span> Estatísticas</button>
+      <button type="button" class="tab-btn" data-tab="amigos"><span class="tab-btn-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2c2.4.3 4 2 4 4.8"/></svg></span> Amigos</button>
+      <button type="button" class="tab-btn" data-tab="discovery"><span class="tab-btn-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-6 2 2-6 6-2z"/></svg></span> Discovery</button>
     </nav>
 
     <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
 
     <nav class="bottom-nav" id="bottom-nav">
       <button type="button" class="tab-btn bottom-nav-btn" data-tab="consultar">
-        <span class="bottom-nav-icone">🔍</span>
+        <span class="bottom-nav-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <span class="bottom-nav-label">Buscar</span>
       </button>
       <button type="button" class="tab-btn bottom-nav-btn" data-tab="lista">
-        <span class="bottom-nav-icone">📋</span>
+        <span class="bottom-nav-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
         <span class="bottom-nav-label">Lista</span>
       </button>
       <button type="button" class="tab-btn bottom-nav-btn" data-tab="timeline">
-        <span class="bottom-nav-icone">🗓️</span>
+        <span class="bottom-nav-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/></svg></span>
         <span class="bottom-nav-label">Timeline</span>
       </button>
       <button type="button" class="tab-btn bottom-nav-btn bottom-nav-central ativa" data-tab="dashboard">
-        <span class="bottom-nav-icone">📊</span>
+        <span class="bottom-nav-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5a1 1 0 0 0 1 1h3.5v-6h3v6H17a1 1 0 0 0 1-1V10"/></svg></span>
         <span class="bottom-nav-label">Início</span>
       </button>
       <button type="button" class="tab-btn bottom-nav-btn" data-tab="estatisticas">
-        <span class="bottom-nav-icone">📈</span>
+        <span class="bottom-nav-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="15"/><line x1="3" y1="21" x2="21" y2="21"/></svg></span>
         <span class="bottom-nav-label">Estatísticas</span>
       </button>
       <button type="button" class="tab-btn bottom-nav-btn" data-tab="amigos">
-        <span class="bottom-nav-icone">👥</span>
+        <span class="bottom-nav-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2c2.4.3 4 2 4 4.8"/></svg></span>
         <span class="bottom-nav-label">Amigos</span>
       </button>
       <button type="button" class="tab-btn bottom-nav-btn" data-tab="discovery">
-        <span class="bottom-nav-icone">🧭</span>
+        <span class="bottom-nav-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-6 2 2-6 6-2z"/></svg></span>
         <span class="bottom-nav-label">Discovery</span>
       </button>
     </nav>
@@ -113,7 +113,8 @@
         </button>
         <div class="notificacoes-wrap">
           <button type="button" id="btn-notificacoes" class="btn-notificacoes">
-            🔔<span id="badge-notificacoes" class="notif-badge" hidden>0</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+            <span id="badge-notificacoes" class="notif-badge" hidden>0</span>
           </button>
           <div id="painel-notificacoes" class="painel-notificacoes" hidden>
             <p class="painel-notificacoes-titulo">Notificações</p>

@@ -15,11 +15,11 @@ const CARDS_ESTATISTICAS = [
 ];
 
 const CORES_RESUMO = {
-  assistindo: "#3498db",
-  completa: "#2ecc71",
-  pausada: "#f39c12",
+  assistindo: "var(--cor-informativo)",
+  completa: "var(--cor-positivo)",
+  pausada: "var(--cor-atencao)",
   "quero-assistir": "#f1c40f",
-  cancelada: "#e74c3c",
+  cancelada: "var(--cor-alerta)",
   encerrada: "#7f8c8d",
 };
 
