@@ -102,6 +102,25 @@ btnMenuMobileEl.addEventListener("click", () => {
 
 sidebarOverlayEl.addEventListener("click", fecharSidebar);
 
+const bottomNavEl = document.getElementById("bottom-nav");
+
+function atualizarIndicadorScrollBottomNav() {
+  if (!bottomNavEl) return;
+  const podeRolarEsquerda = bottomNavEl.scrollLeft > 4;
+  const podeRolarDireita = bottomNavEl.scrollLeft < bottomNavEl.scrollWidth - bottomNavEl.clientWidth - 4;
+  bottomNavEl.classList.toggle("pode-rolar-esquerda", podeRolarEsquerda);
+  bottomNavEl.classList.toggle("pode-rolar-direita", podeRolarDireita);
+}
+
+if (bottomNavEl) {
+  bottomNavEl.addEventListener("scroll", atualizarIndicadorScrollBottomNav);
+  window.addEventListener("resize", atualizarIndicadorScrollBottomNav);
+  // A barra fica "hidden" até o login — um ResizeObserver recalcula o
+  // indicador assim que ela ganha layout (login) e a cada mudança de tamanho.
+  new ResizeObserver(atualizarIndicadorScrollBottomNav).observe(bottomNavEl);
+  atualizarIndicadorScrollBottomNav();
+}
+
 const btnAbrirFiltrosListaEl = document.getElementById("btn-abrir-filtros-lista");
 const listaFiltrosAvancadosEl = document.querySelector(".lista-filtros-avancados");
 const listaFiltrosOverlayEl = document.getElementById("lista-filtros-overlay");

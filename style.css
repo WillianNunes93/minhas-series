@@ -493,6 +493,12 @@ main {
     display: none !important;
   }
 
+  /* O header com o logo só faz sentido na tela de login — depois que o
+     app carrega ele só rouba espaço de tela em cima da dobra. */
+  body:has(#app-container:not([hidden])) header {
+    display: none;
+  }
+
   main {
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
@@ -516,6 +522,35 @@ main {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
+  }
+
+  /* Os 7 itens não cabem de uma vez — esses fades nas bordas avisam que
+     dá pra arrastar a barra pros lados, controlados via JS (script.js). */
+  .bottom-nav::before,
+  .bottom-nav::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 28px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .bottom-nav::before {
+    left: 0;
+    background: linear-gradient(to right, color-mix(in srgb, var(--cor-card-alt) 85%, transparent), transparent);
+  }
+
+  .bottom-nav::after {
+    right: 0;
+    background: linear-gradient(to left, color-mix(in srgb, var(--cor-card-alt) 85%, transparent), transparent);
+  }
+
+  .bottom-nav.pode-rolar-esquerda::before,
+  .bottom-nav.pode-rolar-direita::after {
+    opacity: 1;
   }
 
   /* Os 7 itens não cabem juntos na tela: em vez de esconder alguns atrás
@@ -1144,7 +1179,8 @@ select {
   color: var(--cor-texto);
   padding: 0.65rem 0.75rem;
   border-radius: 10px;
-  font-size: 0.95rem;
+  /* 16px é o limiar que evita o zoom automático do Safari mobile ao focar o campo. */
+  font-size: 1rem;
   font-family: inherit;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -2326,6 +2362,16 @@ button:active {
     border-radius: 20px 20px 0 0;
     padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
     animation: subir-sheet 0.2s ease-out;
+  }
+
+  /* Alvo de toque maior — 30px ficava abaixo do mínimo recomendado (~44px)
+     e de difícil alcance no canto da tela. */
+  .modal-fechar {
+    width: 44px;
+    height: 44px;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 1.1rem;
   }
 }
 
